@@ -1,13 +1,13 @@
-/* NOIR GOLD — roulette.js: Ruleta Art Déco (internas/externas/docenas/columnas + trucos) */
+/* NOIR GOLD — roulette.js: Ruleta Art Déco simplificada (plenos + color/paridad + trucos) */
 'use strict';
 const RL = {
   bets: {}, hist: [], wheelAngle: 0, ballAngle: 0,
-  spinning: false, chipSel: null, armedDados: false, biasDozen: null,
+  spinning: false, chipSel: null, armedDados: false, biasColor: null,
   usedTrickThisSpin: false, boardBuilt: false, rotor: null, placementHistory: [],
 
   enter() {
     this.bets = {};
-    this.biasDozen = null;
+    this.biasColor = null;
     this.armedDados = false;
     this.spinning = false;
     this.usedTrickThisSpin = false;
@@ -114,18 +114,10 @@ const RL = {
       const col = Math.ceil(n / 3) + 1;
       mk('n' + n, String(n), DATA.isRed(n) ? 'red' : 'black', row + ' / ' + col + ' / ' + row + ' / ' + (col + 1));
     }
-    mk('col3', '2:1', 'outside colbet', '1 / 14 / 2 / 15');
-    mk('col2', '2:1', 'outside colbet', '2 / 14 / 3 / 15');
-    mk('col1', '2:1', 'outside colbet', '3 / 14 / 4 / 15');
-    mk('dz1', '1.ª 12', 'outside dozen', '4 / 2 / 5 / 6');
-    mk('dz2', '2.ª 12', 'outside dozen', '4 / 6 / 5 / 10');
-    mk('dz3', '3.ª 12', 'outside dozen', '4 / 10 / 5 / 14');
-    mk('low', '1-18', 'outside oe', '5 / 2 / 6 / 4');
-    mk('even', 'PAR', 'outside oe', '5 / 4 / 6 / 6');
-    mk('red', 'ROJO', 'outside oe o-red', '5 / 6 / 6 / 8');
-    mk('black', 'NEGRO', 'outside oe o-black', '5 / 8 / 6 / 10');
-    mk('odd', 'IMPAR', 'outside oe', '5 / 10 / 6 / 12');
-    mk('high', '19-36', 'outside oe', '5 / 12 / 6 / 14');
+    mk('red', 'ROJO', 'outside o-red', '4 / 2 / 5 / 5');
+    mk('black', 'NEGRO', 'outside o-black', '4 / 5 / 5 / 8');
+    mk('even', 'PAR', 'outside', '4 / 8 / 5 / 11');
+    mk('odd', 'IMPAR', 'outside', '4 / 11 / 5 / 14');
     U.on(b, 'click', (e) => {
       const cell = e.target.closest('.rl-cell');
       if (cell) this.onCellClick(cell);
@@ -140,15 +132,15 @@ const RL = {
     if (this.spinning) return;
     const key = cell.dataset.key;
     if (this.armedDados) {
-      if (key === 'dz1' || key === 'dz2' || key === 'dz3') {
-        this.biasDozen = key;
+      if (key === 'red' || key === 'black') {
+        this.biasColor = key;
         this.armedDados = false;
         if (!State.useTrick('dados')) return;
         this.usedTrickThisSpin = true;
-        U.toast('El plato está lastrado: la ' + cell.textContent + ' caerá con mucha más frecuencia (1 giro).', 'sus');
+        U.toast('El plato está lastrado: el ' + (key === 'red' ? 'ROJO' : 'NEGRO') + ' caerá con mucha más frecuencia (1 giro).', 'sus');
         this.renderTrickPanel();
         Sound.sfx.chips();
-      } else U.toast('Elige una DOCENA (1.ª, 2.ª o 3.ª) para lastrar el plato.', 'info');
+      } else U.toast('Elige ROJO o NEGRO para lastrar el plato.', 'info');
       return;
     }
     const v = this.selValue();
@@ -224,28 +216,19 @@ const RL = {
       case 'black': return (n !== 0 && !DATA.isRed(n)) ? amt * 2 : 0;
       case 'even': return (n !== 0 && n % 2 === 0) ? amt * 2 : 0;
       case 'odd': return (n % 2 === 1) ? amt * 2 : 0;
-      case 'low': return (n >= 1 && n <= 18) ? amt * 2 : 0;
-      case 'high': return (n >= 19) ? amt * 2 : 0;
-      case 'dz1': return (n >= 1 && n <= 12) ? amt * 3 : 0;
-      case 'dz2': return (n >= 13 && n <= 24) ? amt * 3 : 0;
-      case 'dz3': return (n >= 25) ? amt * 3 : 0;
-      case 'col1': return (n !== 0 && n % 3 === 1) ? amt * 3 : 0;
-      case 'col2': return (n !== 0 && n % 3 === 2) ? amt * 3 : 0;
-      case 'col3': return (n !== 0 && n % 3 === 0) ? amt * 3 : 0;
     }
     return 0;
   },
   sampleResult() {
     const luck = State.hasAmulet('pata') ? 0.05 : 0;
-    const bias = this.biasDozen ? (State.synActive('fortuna') ? 4 : 3) : 1;
-    const inDz = (n) => (this.biasDozen === 'dz1' && n >= 1 && n <= 12) ||
-      (this.biasDozen === 'dz2' && n >= 13 && n <= 24) ||
-      (this.biasDozen === 'dz3' && n >= 25);
+    const bias = this.biasColor ? (State.synActive('fortuna') ? 4 : 3) : 1;
     const w = [];
     for (let n = 0; n <= 36; n++) {
       let weight = 1;
-      if (this.biasDozen && inDz(n)) weight = bias;
-      else if (this.biasDozen) weight = 0.55; // el resto cae menos
+      if (this.biasColor) {
+        const isBias = n !== 0 && (this.biasColor === 'red' ? DATA.isRed(n) : !DATA.isRed(n));
+        weight = isBias ? bias : 0.55; // el color contrario cae menos
+      }
       if (luck && this.pays(n)) weight *= 1 + luck * 3;
       w.push(weight);
     }
@@ -332,7 +315,7 @@ const RL = {
       const moved = await this.destiempoWindow(n);
       if (moved) await U.sleep(600);
     }
-    this.biasDozen = null;
+    this.biasColor = null;
 
     // pagos (con multiplicadores de tragos/sinergias)
     const mult = State.payoutMult('roulette');
@@ -422,13 +405,13 @@ const RL = {
       if (!def || def.game !== 'roulette') continue;
       if (t.id === 'destiempo') continue; // aparece tras el giro
       const b = U.el('button', 'trick-btn' + (this.armedDados ? ' flash' : ''),
-        '<span class="tb-name">' + def.ico + ' ' + def.name.toUpperCase() + (this.armedDados ? ' — ELIGE UNA DOCENA' : '') + '</span><span class="tb-charges">×' + t.charges + '</span>');
+        '<span class="tb-name">' + def.ico + ' ' + def.name.toUpperCase() + (this.armedDados ? ' — ELIGE UN COLOR' : '') + '</span><span class="tb-charges">×' + t.charges + '</span>');
       b.type = 'button';
       b.setAttribute('data-tip', def.desc);
-      b.disabled = this.spinning || this.biasDozen !== null;
+      b.disabled = this.spinning || this.biasColor !== null;
       b.onclick = () => {
         this.armedDados = !this.armedDados;
-        if (this.armedDados) U.toast('Elige la docena que quieres lastrar en el tablero.', 'info');
+        if (this.armedDados) U.toast('Elige ROJO o NEGRO en el tablero para lastrar el plato.', 'info');
         this.renderTrickPanel();
       };
       panel.appendChild(b);

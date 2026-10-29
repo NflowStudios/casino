@@ -23,8 +23,8 @@
 
 ### Las mesas
 - **Blackjack** — Hit / Stand / Double Down / Surrender, apuestas laterales (Pareja Perfecta, 21+3), zapato de 6 barajas y conteo Hi-Lo visible con el truco *Cartas Marcadas*.
-- **Ruleta Art Déco** — Europea (un 0): plenos, docenas, columnas, color, par/impar, mitades. Slow-zoom cinematográfico en los últimos giros.
-- **Tragamonedas "El Dorado"** — 3 carretes, palanca con física, mecánica **Hold & Nudge** (retener / empujar), comodín ★.
+- **Ruleta Art Déco** — Europea (un 0): **tapete simple** con plenos (35:1) y apuestas de color / par-impar (1:1). Slow-zoom cinematográfico en los últimos giros.
+- **Tragamonedas "El Dorado"** — 3 carretes, palanca con física y comodín ★. Giro clásico directo: tirar, ver y cobrar.
 
 ### El catálogo
 - **Tragos (La Barra):** temporales — Manhattan, Old Fashioned, Sidecar, French 75, Gin Rickey, Bee's Knees, Corpse Reviver Nº2.
@@ -60,8 +60,8 @@ casino/
 │  ├─ hub.js               Piso del casino: puertas, servicios, teléfono de la deuda
 │  ├─ shops.js             La Barra, el Mercado Negro y la Habitación Trasera
 │  ├─ blackjack.js         Mesa de 21 completa
-│  ├─ roulette.js          Rueda SVG generada, tablero, animación con slow-zoom
-│  ├─ slots.js             Tragamonedas con palanca y Hold & Nudge
+│  ├─ roulette.js          Rueda SVG generada, tapete simple (plenos + color/paridad), animación con slow-zoom
+│  ├─ slots.js             Tragamonedas clásico con palanca (giro directo, sin retenciones)
 │  └─ main.js              Bootstrap, menú, finales, ayuda
 └─ README.md
 ```
@@ -76,6 +76,16 @@ casino/
 ## Despliegue (GitHub Pages)
 
 El sitio se sirve desde la rama `main`, carpeta raíz (`/`). Cualquier `git push` actualiza el juego en segundos.
+
+## Registro de cambios
+
+### v1.1.0
+- **Arreglo:** los modales (Cómo Jugar, La Barra, El Callejón y confirmaciones) no se abrían — el atributo `hidden` del HTML los mantenía ocultos pese a la clase `open`.
+- **Ruleta simplificada:** el tapete pasa a plenos + ROJO / NEGRO / PAR / IMPAR. Fuera docenas, columnas y mitades. *Dados Cargados* ahora sesga el color elegido.
+- **Tragamonedas clásico:** se elimina la mecánica Hold & Nudge (retener / empujar). *Dedos de Oro* ahora concede una tirada gratis y el *Trébol* paga +15% en premios.
+
+### v1.0.0
+- Lanzamiento inicial.
 
 ## Hoja de ruta
 

@@ -179,8 +179,8 @@ const App = {
       '<p><b>La Barra (Tragos):</b> mejoras temporales por rondas. <b>El Callejón (Mercado Negro):</b> trucos con cargas (alto riesgo, alta recompensa) y amuletos pasivos permanentes por partida. Ciertas combinaciones activan <b>Sinergias VIP</b> (ej.: Old Fashioned + Reloj de Oro = <span class="gold">Hora Dorada</span>).</p>' +
       '<h3>LAS MESAS</h3>' +
       '<p><b>Blackjack:</b> pide, plántate, dobla o ríndete. Apuestas laterales: Pareja Perfecta y 21+3. Con <i>Cartas Marcadas</i> verás la carta oculta y el conteo real de cartas.</p>' +
-      '<p><b>Ruleta Art Déco:</b> apuesta a pleno (35:1), docenas, columnas, color, par/impar o mitades. La <i>Sortija de la Croupier</i> cubre números adyacentes. En los últimos giros, la cámara se acerca…</p>' +
-      '<p><b>Tragamonedas:</b> tira de la palanca, <b>reten</b> carretes para el próximo giro y usa <b>empujes</b> para completar combinaciones. ★ es el comodín.</p>' +
+      '<p><b>Ruleta Art Déco:</b> apuesta a <b>número pleno</b> (paga 35:1), al <b>color</b> o a <b>par/impar</b> (pagan 1:1). La <i>Sortija de la Croupier</i> cubre números adyacentes. En los últimos giros, la cámara se acerca…</p>' +
+      '<p><b>Tragamonedas:</b> elige tu ficha, tira de la palanca y alinea tres símbolos. <b>★ es el comodín:</b> sustituye a cualquier símbolo para completar la combinación.</p>' +
       '<h3>CONTROLES</h3>' +
       '<p>Clic para todo. Botón derecho retira fichas de la ruleta. <b>M</b> silencia. <b>Esc</b> cierra ventanas. El sonido es jazz sintetizado en vivo: cada noche suena distinto.</p>';
   }

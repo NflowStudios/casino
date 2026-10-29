@@ -1,17 +1,15 @@
-/* NOIR GOLD — slots.js: Tragamonedas 3 carretes + palanca + Hold & Nudge */
+/* NOIR GOLD — slots.js: Tragamonedas clásico de 3 carretes + palanca */
 'use strict';
 const SL = {
-  strips: [], pos: [0, 0, 0], holds: [false, false, false],
+  strips: [], pos: [0, 0, 0],
   SYM_H: 86, LEN: 20,
-  bet: 10, chipSel: null, spinning: false, nudges: 0, nudgesBonus: 0,
-  usedTrickThisSpin: false, collectTimer: null, tickTimer: null, leverBusy: false,
+  bet: 10, chipSel: null, spinning: false,
+  usedTrickThisSpin: false, freeSpin: false, tickTimer: null, leverBusy: false,
 
   enter() {
     this.spinning = false;
-    this.nudges = 0;
-    this.nudgesBonus = 0;
     this.usedTrickThisSpin = false;
-    this.holds = [false, false, false];
+    this.freeSpin = false;
     this.bindOnce();
     if (!this.strips.length) {
       this.strips = [DATA.buildStrip(), DATA.buildStrip(), DATA.buildStrip()];
@@ -23,8 +21,6 @@ const SL = {
     this.renderTrickPanel();
     this.chipSel = UI.chipRow(U.$('sl-chips'), (v) => { this.bet = v; }, this.bet);
     this.setMsg('Tira de la palanca o pulsa GIRAR');
-    U.$('sl-collect').hidden = true;
-    U.$('sl-nudges').textContent = '';
     this.refreshControls();
     UI.renderMult('slots', 'sl-mult');
     UI.show('slots');
@@ -39,9 +35,6 @@ const SL = {
     if (this._bound) return;
     this._bound = true;
     U.on(U.$('sl-spin'), 'click', () => this.spin());
-    U.on(U.$('sl-collect'), 'click', () => { if (!U.$('sl-collect').hidden) this.settle(); });
-    U.$$('.reel-hold').forEach((b) => U.on(b, 'click', () => this.toggleHold(+b.dataset.reel)));
-    U.$$('.nudge-btn').forEach((b) => U.on(b, 'click', () => this.nudge(+b.dataset.reel, +b.dataset.dir)));
   },
 
   /* ---------- construcción ---------- */
@@ -54,7 +47,6 @@ const SL = {
         return '<div class="sym sym-' + s + '">' + DATA.SYM_LABEL[s] + '</div>';
       }).join('');
       this.applyPos(i);
-      reel.classList.toggle('held', this.holds[i]);
     });
   },
   applyPos(i) {
@@ -84,11 +76,7 @@ const SL = {
 
   /* ---------- controles ---------- */
   refreshControls() {
-    const spin = U.$('sl-spin');
-    spin.disabled = this.spinning || (!U.$('sl-collect').hidden);
-    U.$$('.reel-hold').forEach((b) => { b.disabled = this.spinning || this.nudges > 0; });
-    U.$$('.nudge-btn').forEach((b) => { b.disabled = this.spinning || this.nudges <= 0; b.classList.toggle('glow', this.nudges > 0); });
-    U.$('sl-nudges').textContent = this.nudges > 0 ? 'EMPUJES: ' + this.nudges : '';
+    U.$('sl-spin').disabled = this.spinning;
   },
   setMsg(txt, cls) {
     const m = U.$('sl-msg');
@@ -102,7 +90,7 @@ const SL = {
     const knob = U.$('sl-knob');
     let startY = 0, dy = 0, dragging = false;
     U.on(knob, 'pointerdown', (e) => {
-      if (this.spinning || this.leverBusy || !U.$('sl-collect').hidden) return;
+      if (this.spinning || this.leverBusy) return;
       dragging = true;
       startY = e.clientY;
       knob.classList.add('drag');
@@ -135,29 +123,35 @@ const SL = {
 
   /* ---------- giro ---------- */
   async spin(fromLever) {
-    if (this.spinning || !U.$('sl-collect').hidden) return;
-    if (this.bet > State.run.chips) { U.toast('No te alcanza para esta apuesta.', 'danger'); return; }
+    if (this.spinning) return;
+    if (this.bet > State.run.chips && !this.freeSpin) { U.toast('No te alcanza para esta apuesta.', 'danger'); return; }
     if (this.bet > Math.min(500, State.tierCap())) { U.toast('Límite del ' + DATA.TIERS[State.run.tier].name + ': ' + U.fmt(Math.min(500, State.tierCap())), 'danger'); return; }
     this.spinning = true;
-    this.usedTrickThisSpin = false;
+    this.refreshControls();
     if (fromLever) Sound.sfx.lever();
     else Sound.sfx.chips();
-    State.addChips(-this.bet);
+
+    // Dedos de Oro: la tirada es gratis
+    if (this.freeSpin) {
+      this.freeSpin = false;
+      U.toast('Tirada cortesía de tus dedos de oro. El encargado no vio nada.', 'gold');
+    } else {
+      State.addChips(-this.bet);
+    }
     State.recordSpin('slots');
     this.setMsg('Los carretes giran…');
     U.$('sl-msg').classList.remove('big');
     FX.flash('rgba(255,220,140,.12)', 300);
 
     // determinar paradas objetivo (con asistencia de suerte)
-    let targets = this.pos.map((p, i) => this.holds[i] ? Math.round(p) : U.randInt(0, 19));
+    const targets = this.pos.map(() => U.randInt(0, 19));
     const luck = State.hasAmulet('pata') ? 0.05 : 0;
-    if (luck && !this.holds.every((h) => h)) {
-      // probar si un ±1 en algún carreté libre crea premio
+    if (luck) {
+      // probar si un ±1 en algún carrete crea premio
       const symsNow = targets.map((t, i) => this.strips[i][(t + 1) % this.LEN]);
       if (!DATA.evalLine(symsNow) && U.chance(luck)) {
         let best = null;
         for (let i = 0; i < 3; i++) {
-          if (this.holds[i]) continue;
           for (const d of [-1, 1]) {
             const t2 = targets.slice();
             t2[i] = ((t2[i] + d) % this.LEN + this.LEN) % this.LEN;
@@ -169,11 +163,10 @@ const SL = {
       }
     }
 
-    // animar cada carrete no retenido
+    // animar cada carrete
     const durs = [1250 + U.randInt(0, 250), 1850 + U.randInt(0, 300), 2500 + U.randInt(0, 350)];
     this.tickTimer = setInterval(() => Sound.sfx.reel(), 95);
     const anims = this.pos.map((p, i) => {
-      if (this.holds[i]) return Promise.resolve();
       const start = Math.round(p);
       const delta = ((targets[i] - start) % this.LEN + this.LEN) % this.LEN;
       const end = start + this.LEN * (2 + i) + delta;
@@ -204,66 +197,18 @@ const SL = {
     await Promise.all(anims);
     clearInterval(this.tickTimer);
 
-    // limpiar retenciones tras el giro
-    this.holds = [false, false, false];
-    U.$$('#sl-reels .sl-reel').forEach((r) => r.classList.remove('held'));
-
-    // empujes disponibles
-    let base = 0;
-    const r0 = Math.random();
-    if (r0 > 0.5) base = r0 > 0.85 ? 2 : 1;
-    this.nudges = base + (State.hasAmulet('trebol') ? 1 : 0) + this.nudgesBonus;
-    this.nudgesBonus = 0;
-    this.spinning = false;
-
-    if (this.nudges > 0) {
-      this.setMsg('Tienes ' + this.nudges + ' empuje(s): ▲▼ para mover un carrete, luego COBRAR.');
-      U.$('sl-collect').hidden = false;
-      this.armCollectTimer();
-    } else {
-      await U.sleep(500);
-      this.settle();
-    }
-    this.refreshControls();
-  },
-
-  armCollectTimer() {
-    clearTimeout(this.collectTimer);
-    this.collectTimer = setTimeout(() => { if (!U.$('sl-collect').hidden) this.settle(); }, 8000);
-  },
-
-  nudge(i, dir) {
-    if (this.spinning || this.nudges <= 0) return;
-    this.nudges--;
-    this.pos[i] = ((Math.round(this.pos[i]) + dir) % this.LEN + this.LEN) % this.LEN;
-    this.applyPos(i);
-    Sound.sfx.reel();
-    const res = DATA.evalLine(this.paylineSyms());
-    if (res) this.setMsg('¡' + res.label + ' (×' + res.m + ')! Pulsa COBRAR.', 'big');
-    else this.setMsg('Empujes restantes: ' + this.nudges);
-    this.refreshControls();
-    this.armCollectTimer();
-    if (this.nudges <= 0) setTimeout(() => { if (!U.$('sl-collect').hidden) this.settle(); }, 900);
-  },
-
-  toggleHold(i) {
-    if (this.spinning || this.nudges > 0) return;
-    this.holds[i] = !this.holds[i];
-    const reel = document.querySelector('#sl-reels .sl-reel[data-reel="' + i + '"]');
-    reel.classList.toggle('held', this.holds[i]);
-    Sound.sfx.chips();
-    this.setMsg(this.holds[i] ? 'Carrete retenido para el próximo giro.' : 'Carrete liberado.');
+    await U.sleep(520);
+    this.settle();
   },
 
   /* ---------- liquidación ---------- */
   settle() {
-    clearTimeout(this.collectTimer);
-    U.$('sl-collect').hidden = true;
     const syms = this.paylineSyms();
     const res = DATA.evalLine(syms);
     const mult = State.payoutMult('slots');
     if (res) {
-      const win = Math.round(this.bet * res.m * mult);
+      let win = Math.round(this.bet * res.m * mult);
+      if (State.hasAmulet('trebol')) win = Math.round(win * 1.15); // Trébol: +15% en slots
       State.addChips(win);
       State.recordWin(win, 'slots');
       this.setMsg('¡' + res.label + ' +' + U.fmt(win) + ' fichas!', 'big');
@@ -282,10 +227,13 @@ const SL = {
       Sound.sfx.lose();
     }
     State.markRound(!this.usedTrickThisSpin);
+    this.usedTrickThisSpin = false;
+    this.spinning = false;
     const route = State.afterRound();
     if (route === 'dead') return;
     if (route === 'backroom') { setTimeout(() => Backroom.trigger(), 700); return; }
     this.refreshControls();
+    this.renderTrickPanel();
     UI.renderMult('slots', 'sl-mult');
     UI.renderHUD();
   },
@@ -301,15 +249,15 @@ const SL = {
       const def = DATA.TRICKS.find((x) => x.id === t.id);
       if (!def || def.game !== 'slots') continue;
       const b = U.el('button', 'trick-btn',
-        '<span class="tb-name">' + def.ico + ' ' + def.name.toUpperCase() + (this.nudgesBonus > 0 ? ' LISTO' : '') + '</span><span class="tb-charges">×' + t.charges + '</span>');
+        '<span class="tb-name">' + def.ico + ' ' + def.name.toUpperCase() + (this.freeSpin ? ' LISTO' : '') + '</span><span class="tb-charges">×' + t.charges + '</span>');
       b.type = 'button';
       b.setAttribute('data-tip', def.desc);
-      b.disabled = this.spinning || this.nudgesBonus > 0 || !U.$('sl-collect').hidden;
+      b.disabled = this.spinning || this.freeSpin;
       b.onclick = () => {
         if (!State.useTrick('dedos')) return;
         this.usedTrickThisSpin = true;
-        this.nudgesBonus = def.effect.extraNudges;
-        U.toast('Frotes los dedos contra el metal: +' + this.nudgesBonus + ' empujes en la próxima tirada.', 'sus');
+        this.freeSpin = true;
+        U.toast('Tus dedos distraen al encargado: la próxima tirada es gratis.', 'sus');
         this.renderTrickPanel();
       };
       panel.appendChild(b);

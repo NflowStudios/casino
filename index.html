@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Josefin+Sans:wght@300;400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=2">
-<link rel="stylesheet" href="css/games.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/games.css?v=3">
 </head>
 <body class="tier-0" data-screen="menu">
 <div id="game">
@@ -33,7 +33,7 @@
       <button type="button" class="btn btn-gold btn-deco" id="btn-new">NUEVA PARTIDA</button>
       <button type="button" class="btn btn-ghost btn-deco" id="btn-help">CÓMO JUGAR</button>
     </nav>
-    <footer class="menu-foot"><span id="menu-best"></span><span class="ver">v1.0.0</span></footer>
+    <footer class="menu-foot"><span id="menu-best"></span><span class="ver">v1.1.0</span></footer>
   </section>
 
   <!-- ============ SELECCIÓN DE MODO ============ -->
@@ -104,7 +104,7 @@
           <span class="door-art da-rl"><i class="da-wheel"></i></span>
           <span class="door-name">RULETA</span><span class="door-sub">Rueda Art Déco</span>
         </button>
-        <button type="button" class="door" id="door-sl" data-tip="Tres carretes. Reten y empuja.">
+        <button type="button" class="door" id="door-sl" data-tip="Tres carretes. Comodín ★.">
           <span class="door-art da-sl"><i class="da-reel">7</i><i class="da-reel">★</i><i class="da-reel">♦</i></span>
           <span class="door-name">TRAGAMONEDAS</span><span class="door-sub">"El Dorado"</span>
         </button>
@@ -204,19 +204,14 @@
       <div class="sl-cabinet deco-frame">
         <div class="sl-marquee"><span class="sl-mq-star">✦</span> EL DORADO <span class="sl-mq-star">✦</span></div>
         <div class="sl-reels" id="sl-reels">
-          <div class="sl-reel" data-reel="0"><div class="sl-window"><div class="sl-strip"></div></div>
-            <div class="reel-foot"><button type="button" class="reel-hold" data-reel="0">RETENER</button><button type="button" class="nudge-btn" data-reel="0" data-dir="-1">▲</button><button type="button" class="nudge-btn" data-reel="0" data-dir="1">▼</button></div></div>
-          <div class="sl-reel" data-reel="1"><div class="sl-window"><div class="sl-strip"></div></div>
-            <div class="reel-foot"><button type="button" class="reel-hold" data-reel="1">RETENER</button><button type="button" class="nudge-btn" data-reel="1" data-dir="-1">▲</button><button type="button" class="nudge-btn" data-reel="1" data-dir="1">▼</button></div></div>
-          <div class="sl-reel" data-reel="2"><div class="sl-window"><div class="sl-strip"></div></div>
-            <div class="reel-foot"><button type="button" class="reel-hold" data-reel="2">RETENER</button><button type="button" class="nudge-btn" data-reel="2" data-dir="-1">▲</button><button type="button" class="nudge-btn" data-reel="2" data-dir="1">▼</button></div></div>
+          <div class="sl-reel" data-reel="0"><div class="sl-window"><div class="sl-strip"></div></div></div>
+          <div class="sl-reel" data-reel="1"><div class="sl-window"><div class="sl-strip"></div></div></div>
+          <div class="sl-reel" data-reel="2"><div class="sl-window"><div class="sl-strip"></div></div></div>
         </div>
         <div class="sl-lever" id="sl-lever"><div class="sl-lever-slot"></div><div class="sl-knob" id="sl-knob"></div></div>
         <div class="sl-controls">
           <div class="sl-chip-row" id="sl-chips"></div>
           <button type="button" class="btn btn-gold btn-deco btn-big" id="sl-spin">GIRAR</button>
-          <span class="sl-nudge-count" id="sl-nudges"></span>
-          <button type="button" class="btn btn-ghost btn-deco" id="sl-collect" hidden>COBRAR</button>
         </div>
         <div class="sl-msg" id="sl-msg">Tira de la palanca</div>
         <div class="trick-panel sl-tricks" id="sl-tricks"></div>
@@ -325,7 +320,7 @@
 <div id="tooltip" hidden></div>
 
 <!-- ============ MODAL: LA BARRA ============ -->
-<div class="modal" id="modal-bar" hidden>
+<div class="modal" id="modal-bar">
   <div class="modal-panel deco-frame">
     <header class="modal-head">
       <div class="bar-scene">
@@ -349,7 +344,7 @@
 </div>
 
 <!-- ============ MODAL: MERCADO NEGRO ============ -->
-<div class="modal" id="modal-market" hidden>
+<div class="modal" id="modal-market">
   <div class="modal-panel deco-frame">
     <div class="rain-layer" aria-hidden="true"></div>
     <header class="modal-head">
@@ -378,7 +373,7 @@
 </div>
 
 <!-- ============ MODAL: AYUDA ============ -->
-<div class="modal" id="modal-help" hidden>
+<div class="modal" id="modal-help">
   <div class="modal-panel deco-frame modal-help">
     <header class="modal-head"><h2>CÓMO JUGAR</h2><button type="button" class="modal-x" data-close="modal-help">✕</button></header>
     <div class="help-body" id="help-body"></div>
@@ -386,7 +381,7 @@
 </div>
 
 <!-- ============ MODAL: CONFIRMACIÓN ============ -->
-<div class="modal" id="modal-confirm" hidden>
+<div class="modal" id="modal-confirm">
   <div class="modal-panel deco-frame modal-confirm">
     <h3 id="cf-title">¿Seguro?</h3>
     <p id="cf-text"></p>
@@ -394,17 +389,17 @@
   </div>
 </div>
 
-<script src="js/utils.js?v=2"></script>
-<script src="js/audio.js?v=2"></script>
-<script src="js/fx.js?v=2"></script>
-<script src="js/data.js?v=2"></script>
-<script src="js/state.js?v=2"></script>
-<script src="js/ui.js?v=2"></script>
-<script src="js/hub.js?v=2"></script>
-<script src="js/shops.js?v=2"></script>
-<script src="js/blackjack.js?v=2"></script>
-<script src="js/roulette.js?v=2"></script>
-<script src="js/slots.js?v=2"></script>
-<script src="js/main.js?v=2"></script>
+<script src="js/utils.js?v=3"></script>
+<script src="js/audio.js?v=3"></script>
+<script src="js/fx.js?v=3"></script>
+<script src="js/data.js?v=3"></script>
+<script src="js/state.js?v=3"></script>
+<script src="js/ui.js?v=3"></script>
+<script src="js/hub.js?v=3"></script>
+<script src="js/shops.js?v=3"></script>
+<script src="js/blackjack.js?v=3"></script>
+<script src="js/roulette.js?v=3"></script>
+<script src="js/slots.js?v=3"></script>
+<script src="js/main.js?v=3"></script>
 </body>
 </html>

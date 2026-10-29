@@ -54,10 +54,10 @@ const DATA = {
     { id: 'asbajo', name: 'As bajo la Manga', price: 350, charges: 3, sus: 15, ico: '♠', game: 'blackjack',
       desc: 'Tu <b>próxima carta es un As</b> en Blackjack. Sospecha +15 por uso.' },
     { id: 'dedos', name: 'Dedos de Oro', price: 400, charges: 2, sus: 12, ico: '☞', game: 'slots',
-      desc: '<b>+3 empujes</b> en tu próxima tirada de Tragamonedas. Sospecha +12.',
-      effect: { extraNudges: 3 } },
+      desc: 'Tus dedos distraen al encargado: <b>tu próxima tirada de Tragamonedas es gratis</b>. Sospecha +12.',
+      effect: { freeSpin: true } },
     { id: 'dados', name: 'Dados Cargados', price: 450, charges: 3, sus: 18, ico: '⚄', game: 'roulette',
-      desc: 'El mecánico del callejón lastra el plato: la <b>docena elegida cae el triple</b> de a menudo durante un giro. Sospecha +18.',
+      desc: 'El mecánico del callejón lastra el plato: el <b>color que elijas cae el triple</b> de a menudo durante un giro. Sospecha +18.',
       effect: { bias: 3 },
       unlock: 'dados' },
     { id: 'marcadas', name: 'Cartas Marcadas', price: 500, charges: 2, sus: 10, ico: '▤', game: 'blackjack',
@@ -74,7 +74,7 @@ const DATA = {
     { id: 'pata', name: 'Pata de Conejo', price: 300, ico: '☰',
       desc: '<b>+5% de suerte global:</b> la fortuna te sonríe en la ruleta, los carretes y los volados.' },
     { id: 'trebol', name: 'Trébol de Cuatro Hojas', price: 400, ico: '✤',
-      desc: '<b>+1 empuje gratis</b> en cada tirada de Tragamonedas.',
+      desc: 'Los premios del <b>Tragamonedas pagan +15%</b>.',
       unlock: 'trebol' },
     { id: 'sortija', name: 'Sortija de la Croupier', price: 600, ico: '◎',
       desc: 'Tus apuestas a <b>número pleno cubren los números adyacentes</b> de la rueda (pagan 17:1).',
@@ -120,7 +120,7 @@ const DATA = {
       desc: 'As bajo la Manga + Cartas Marcadas: el <b>primer truco de cada ronda no genera sospecha</b>.' },
     { id: 'fortuna', name: 'Fortuna Falsificada',
       req: { trick: 'dados', amulet: 'pata' },
-      desc: 'Dados Cargados + Pata de Conejo: la docena sesgada cae <b>4 veces</b> más, no 3.' }
+      desc: 'Dados Cargados + Pata de Conejo: el color sesgado cae <b>4 veces</b> más, no 3.' }
   ],
 
   itemById(id) {
