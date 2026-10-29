@@ -405,7 +405,7 @@ const RL = {
       if (!def || def.game !== 'roulette') continue;
       if (t.id === 'destiempo') continue; // aparece tras el giro
       const b = U.el('button', 'trick-btn' + (this.armedDados ? ' flash' : ''),
-        '<span class="tb-name">' + def.ico + ' ' + def.name.toUpperCase() + (this.armedDados ? ' — ELIGE UN COLOR' : '') + '</span><span class="tb-charges">×' + t.charges + '</span>');
+        '<span class="tb-name">' + Icon.svg(def.icon, 'tb-ico') + def.name.toUpperCase() + (this.armedDados ? ' — ELIGE UN COLOR' : '') + '</span><span class="tb-charges">×' + t.charges + '</span>');
       b.type = 'button';
       b.setAttribute('data-tip', def.desc);
       b.disabled = this.spinning || this.biasColor !== null;

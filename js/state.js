@@ -116,7 +116,7 @@ const State = {
     // aviso: fondos suficientes para saldar
     if (r.mode === 'story' && !r.debtReadyToasted && r.chips >= r.debt) {
       r.debtReadyToasted = true;
-      U.toast('☎ Tienes lo suficiente: ¡ve al TELÉFONO del casino y salda tu deuda!', 'gold', 6000);
+      U.toast(Icon.svg('phone', 'toast-ico') + 'Tienes lo suficiente: ¡ve al TELÉFONO del casino y salda tu deuda!', 'gold', 6000);
       Sound.sfx.flash();
       Hub.refreshServices();
     }

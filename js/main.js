@@ -4,6 +4,7 @@ const App = {
   init() {
     State.loadMeta();
     FX.init();
+    Icon.paint(); /* sistema de iconografía: pinta [data-ico] y [data-scene] */
     // sonido persistido
     let muted = false;
     try { muted = localStorage.getItem('noirgold.muted') === '1'; } catch (e) {}

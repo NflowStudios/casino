@@ -1,6 +1,43 @@
 /* NOIR GOLD — shops.js: La Barra (tragos), Mercado Negro (trucos/amuletos), Habitación Trasera */
 'use strict';
 
+/* ============ FÁBRICA DE TARJETAS (carta de menú de speakeasy) ============
+   Estados explícitos: is-buyable · is-broke · is-locked · badge de propiedad */
+const ShopUI = {
+  card(o) {
+    const state = o.locked ? 'is-locked' : (o.canBuy ? 'is-buyable' : 'is-broke');
+    const el = U.el('article', 'item-card ' + state + (o.accent ? ' ' + o.accent : ''));
+    let btn;
+    if (o.locked) btn = { t: 'BLOQUEADO', on: false };
+    else if (o.owned) btn = { t: 'TUYO', on: false };
+    else if (!o.canBuy) btn = { t: 'SIN FONDOS', on: false };
+    else btn = { t: o.cta || 'COMPRAR', on: true };
+
+    el.innerHTML =
+      '<div class="ic-loz">' + Icon.svg(o.icon) +
+        (o.locked ? '<span class="ic-lockov">' + Icon.svg('lock') + '</span>' : '') + '</div>' +
+      '<div class="ic-body">' +
+        '<div class="ic-head"><h4 class="ic-name">' + o.name + '</h4>' +
+        (o.meta ? '<span class="ic-meta">' + o.meta + '</span>' : '') +
+        (o.badge ? '<span class="ic-badge ' + o.badge.cls + '">' + o.badge.txt + '</span>' : '') +
+        '</div>' +
+        '<div class="ic-rule" aria-hidden="true"><i></i></div>' +
+        '<p class="ic-desc">' + (o.locked ? o.hint : o.desc) + '</p>' +
+        (!o.locked && !o.owned && !o.canBuy
+          ? '<p class="ic-miss">Te faltan <b>' + U.fmt(Math.max(1, o.missing)) + '</b> fichas</p>' : '') +
+        '<footer class="ic-foot">' +
+        '<span class="ic-price">' + Icon.svg('chip') + U.fmt(o.price) + '</span>' +
+        '<button type="button" class="ic-buy"' + (btn.on ? '' : ' disabled') + '>' + btn.t + '</button>' +
+        '</footer>' +
+      '</div>';
+
+    if (o.onBuy && btn.on) {
+      el.addEventListener('click', () => o.onBuy());
+    }
+    return el;
+  }
+};
+
 /* ================= LA BARRA ================= */
 const Bar = {
   open() {
@@ -13,22 +50,23 @@ const Bar = {
     const list = U.$('bar-list');
     list.innerHTML = '';
     for (const d of DATA.DRINKS) {
-      const locked = d.unlock && !State.isUnlocked(d.unlock);
+      const locked = !!(d.unlock && !State.isUnlocked(d.unlock));
       const active = State.activeDrink(d.id);
-      const row = U.el('div', 'item-row' + (locked ? ' locked' : ''));
-      const canBuy = !locked && State.canAfford(d.price) && !(d.effect.type === 'insurance' && State.run.insurance);
-      row.innerHTML =
-        '<div class="item-ico">' + d.ico + '</div>' +
-        '<div class="item-main"><div class="item-name">' + d.name +
-        (d.effect.type === 'payout' ? ' <small>' + d.effect.rounds + ' RONDAS</small>' : '') + '</div>' +
-        '<div class="item-desc">' + (locked ? '??? — Sin receta todavía.' : d.desc) + '</div>' +
-        (locked ? '<div class="item-hint">🔒 ' + (DATA.UNLOCKS[d.unlock] ? DATA.UNLOCKS[d.unlock].hint : '') + '</div>' : '') +
-        (active ? '<div class="item-own">ACTIVO · ' + active.roundsLeft + ' rondas restantes</div>' : '') +
-        '</div>' +
-        '<div class="item-buy"><span class="item-price">' + U.fmt(d.price) + '</span>' +
-        '<button type="button" class="btn btn-gold btn-deco btn-sm" ' + (canBuy ? '' : 'disabled') + '>PEDIR</button></div>';
-      row.querySelector('button').onclick = () => this.buy(d);
-      list.appendChild(row);
+      const insurance = d.effect.type === 'insurance';
+      const insured = insurance && State.run.insurance;
+      const canBuy = !locked && !insured && State.canAfford(d.price);
+      const meta = d.effect.type === 'instant' ? 'AL INSTANTE'
+        : insurance ? 'UNA VEZ POR PARTIDA'
+        : d.effect.rounds + ' RONDAS';
+      list.appendChild(ShopUI.card({
+        icon: d.icon, name: d.name, meta, price: d.price,
+        locked, canBuy, cta: 'PEDIR',
+        desc: d.desc,
+        hint: locked && DATA.UNLOCKS[d.unlock] ? DATA.UNLOCKS[d.unlock].hint : '',
+        missing: d.price - (State.run ? State.run.chips : 0),
+        badge: active ? { cls: 'b-active', txt: 'ACTIVO · ' + active.roundsLeft + ' RONDAS' } : null,
+        onBuy: () => this.buy(d)
+      }));
     }
   },
   buy(d) {
@@ -62,24 +100,22 @@ const Market = {
     list.innerHTML = '';
     const items = this.tab === 'tricks' ? DATA.TRICKS : DATA.AMULETS;
     for (const it of items) {
-      const locked = it.unlock && !State.isUnlocked(it.unlock);
+      const locked = !!(it.unlock && !State.isUnlocked(it.unlock));
       const owned = this.tab === 'amulets' && State.hasAmulet(it.id);
       const tk = State.trick(it.id);
       const canBuy = !locked && !owned && State.canAfford(it.price);
-      const row = U.el('div', 'item-row ir-' + (this.tab === 'tricks' ? 'trick' : 'amulet') + (locked ? ' locked' : ''));
-      row.innerHTML =
-        '<div class="item-ico">' + it.ico + '</div>' +
-        '<div class="item-main"><div class="item-name">' + it.name +
-        (this.tab === 'tricks' ? ' <small>' + it.charges + ' CARGAS</small>' : ' <small>PASIVO</small>') + '</div>' +
-        '<div class="item-desc">' + (locked ? '??? — El contrabandista niega con la cabeza.' : it.desc) + '</div>' +
-        (locked ? '<div class="item-hint">🔒 ' + (DATA.UNLOCKS[it.unlock] ? DATA.UNLOCKS[it.unlock].hint : '') + '</div>' : '') +
-        (tk ? '<div class="item-own">EN PODER · ' + tk.charges + ' cargas</div>' : '') +
-        '</div>' +
-        '<div class="item-buy"><span class="item-price">' + U.fmt(it.price) + '</span>' +
-        '<button type="button" class="btn btn-gold btn-deco btn-sm" ' + (canBuy ? '' : 'disabled') + '>' +
-        (owned ? 'TUYO' : 'COMPRAR') + '</button></div>';
-      row.querySelector('button').onclick = () => this.buy(it);
-      list.appendChild(row);
+      list.appendChild(ShopUI.card({
+        icon: it.icon, name: it.name, price: it.price,
+        meta: this.tab === 'tricks' ? it.charges + ' CARGAS' : 'PASIVO',
+        accent: this.tab === 'tricks' ? 'ac-trick' : 'ac-amulet',
+        locked, canBuy, owned, cta: 'COMPRAR',
+        desc: it.desc,
+        hint: locked && DATA.UNLOCKS[it.unlock] ? DATA.UNLOCKS[it.unlock].hint : '',
+        missing: it.price - (State.run ? State.run.chips : 0),
+        badge: tk ? { cls: 'b-charge', txt: 'EN TU PODER ×' + tk.charges }
+          : (owned ? { cls: 'b-active', txt: 'EN POSESIÓN' } : null),
+        onBuy: () => this.buy(it)
+      }));
     }
   },
   buy(it) {

@@ -19,7 +19,7 @@ const Sound = {
     this.muted = m;
     if (this.master) this.master.gain.value = m ? 0 : 0.55;
     const ico = U.$('sound-ico');
-    if (ico) ico.textContent = m ? '×' : '♪';
+    if (ico) ico.innerHTML = Icon.svg(m ? 'mute' : 'note');
     try { localStorage.setItem('noirgold.muted', m ? '1' : '0'); } catch (e) {}
   },
   toggle() { this.setMuted(!this.muted); },

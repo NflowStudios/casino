@@ -249,7 +249,7 @@ const SL = {
       const def = DATA.TRICKS.find((x) => x.id === t.id);
       if (!def || def.game !== 'slots') continue;
       const b = U.el('button', 'trick-btn',
-        '<span class="tb-name">' + def.ico + ' ' + def.name.toUpperCase() + (this.freeSpin ? ' LISTO' : '') + '</span><span class="tb-charges">×' + t.charges + '</span>');
+        '<span class="tb-name">' + Icon.svg(def.icon, 'tb-ico') + def.name.toUpperCase() + (this.freeSpin ? ' LISTO' : '') + '</span><span class="tb-charges">×' + t.charges + '</span>');
       b.type = 'button';
       b.setAttribute('data-tip', def.desc);
       b.disabled = this.spinning || this.freeSpin;

@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Josefin+Sans:wght@300;400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3">
-<link rel="stylesheet" href="css/games.css?v=3">
+<link rel="stylesheet" href="css/style.css?v=4">
+<link rel="stylesheet" href="css/games.css?v=4">
 </head>
 <body class="tier-0" data-screen="menu">
 <div id="game">
@@ -97,27 +97,27 @@
       <div class="hub-head"><div class="tier-badge" id="tier-badge">SÓTANO CLANDESTINO</div></div>
       <div class="tables">
         <button type="button" class="door" id="door-bj" data-tip="Veintiuno. Pago 3:2, rinde la mitad.">
-          <span class="door-art da-bj"><i class="da-card"><b>21</b></i></span>
+          <span class="door-art" data-scene="bj"></span>
           <span class="door-name">BLACKJACK</span><span class="door-sub">Mesa de Naipes</span>
         </button>
         <button type="button" class="door" id="door-rl" data-tip="Ruleta europea. Pleno 35:1.">
-          <span class="door-art da-rl"><i class="da-wheel"></i></span>
+          <span class="door-art" data-scene="rl"></span>
           <span class="door-name">RULETA</span><span class="door-sub">Rueda Art Déco</span>
         </button>
         <button type="button" class="door" id="door-sl" data-tip="Tres carretes. Comodín ★.">
-          <span class="door-art da-sl"><i class="da-reel">7</i><i class="da-reel">★</i><i class="da-reel">♦</i></span>
+          <span class="door-art" data-scene="sl"></span>
           <span class="door-name">TRAGAMONEDAS</span><span class="door-sub">"El Dorado"</span>
         </button>
       </div>
       <div class="hub-services">
         <button type="button" class="svc" id="btn-bar" data-tip="Tragos temporales que calman la sospecha.">
-          <span class="svc-ico ico-glass"></span><span class="svc-t">LA BARRA</span><span class="svc-s">Tragos</span>
+          <span class="svc-ico" data-ico="martini"></span><span class="svc-t">LA BARRA</span><span class="svc-s">Tragos</span>
         </button>
         <button type="button" class="svc svc-rain" id="btn-market" data-tip="Trucos y amuletos. El Pit Boss no aprueba.">
-          <span class="svc-ico ico-coat"></span><span class="svc-t">EL CALLEJÓN</span><span class="svc-s">Mercado Negro</span>
+          <span class="svc-ico" data-ico="coat"></span><span class="svc-t">EL CALLEJÓN</span><span class="svc-s">Mercado Negro</span>
         </button>
         <button type="button" class="svc" id="btn-phone" data-tip="Una llamada a la familia Moretti.">
-          <span class="svc-ico ico-phone">☎</span><span class="svc-t">TELÉFONO</span><span class="svc-s" id="phone-note">Deuda</span>
+          <span class="svc-ico" data-ico="phone"></span><span class="svc-t">TELÉFONO</span><span class="svc-s" id="phone-note">Deuda</span>
         </button>
       </div>
     </div>
@@ -279,8 +279,8 @@
       <b class="sus-num" id="sus-num">0%</b>
     </div>
     <div class="hud-right">
-      <button type="button" class="icon-btn" id="btn-sound" data-tip="Sonido [M]"><span id="sound-ico">♪</span></button>
-      <button type="button" class="icon-btn" id="btn-exit" data-tip="Salir al menú">☰</button>
+      <button type="button" class="icon-btn" id="btn-sound" data-tip="Sonido [M]"><span id="sound-ico"></span></button>
+      <button type="button" class="icon-btn" id="btn-exit" data-tip="Salir al menú"><span data-ico="menu"></span></button>
     </div>
   </header>
 
@@ -322,23 +322,25 @@
 <!-- ============ MODAL: LA BARRA ============ -->
 <div class="modal" id="modal-bar">
   <div class="modal-panel deco-frame">
-    <header class="modal-head">
-      <div class="bar-scene">
-        <svg class="bartender" viewBox="0 0 120 90" aria-hidden="true">
-          <rect x="0" y="58" width="120" height="6" fill="#3a2b18"/><rect x="0" y="64" width="120" height="26" fill="#241a0e"/>
-          <g fill="#0f0c14" opacity=".55"><rect x="6" y="6" width="8" height="18" rx="2"/><rect x="18" y="10" width="7" height="14" rx="2"/><rect x="28" y="4" width="9" height="20" rx="2"/><rect x="94" y="8" width="8" height="16" rx="2"/><rect x="106" y="5" width="8" height="19" rx="2"/></g>
-          <g><rect x="104" y="12" width="6" height="10" rx="1" fill="#2f7d46" opacity=".8"/><rect x="94" y="16" width="6" height="8" rx="1" fill="#7a0d26" opacity=".8"/><rect x="10" y="12" width="6" height="10" rx="1" fill="#a8822f" opacity=".85"/></g>
-          <ellipse cx="60" cy="38" rx="11" ry="12" fill="#1a1c24"/>
-          <path d="M42,86 L45,58 Q60,48 75,58 L78,86 Z" fill="#e8e0cc"/>
-          <line x1="52" y1="62" x2="68" y2="72" stroke="#800020" stroke-width="3"/><line x1="68" y1="62" x2="52" y2="72" stroke="#800020" stroke-width="3"/>
-          <path d="M50,46 Q60,42 70,46 L68,52 Q60,49 52,52 Z" fill="#101218"/>
-          <path d="M52,45 Q60,50 68,45 L66,49 Q60,53 54,49 Z" fill="#181b23"/>
-          <circle cx="60" cy="42" r="1.5" fill="#D4AF37"/>
-        </svg>
-        <div class="scene-text"><h2>LA BARRA</h2><p class="flavor">"¿Lo de siempre, forastero?" — Sam, el barman</p></div>
+    <button type="button" class="modal-x" data-close="modal-bar" aria-label="Cerrar"><span data-ico="x"></span></button>
+    <div class="shop-banner sb-bar">
+      <svg class="banner-scene" viewBox="0 0 120 90" aria-hidden="true">
+        <rect x="0" y="58" width="120" height="6" fill="#3a2b18"/><rect x="0" y="64" width="120" height="26" fill="#241a0e"/>
+        <g fill="#0f0c14" opacity=".55"><rect x="6" y="6" width="8" height="18" rx="2"/><rect x="18" y="10" width="7" height="14" rx="2"/><rect x="28" y="4" width="9" height="20" rx="2"/><rect x="94" y="8" width="8" height="16" rx="2"/><rect x="106" y="5" width="8" height="19" rx="2"/></g>
+        <g><rect x="104" y="12" width="6" height="10" rx="1" fill="#2f7d46" opacity=".8"/><rect x="94" y="16" width="6" height="8" rx="1" fill="#7a0d26" opacity=".8"/><rect x="10" y="12" width="6" height="10" rx="1" fill="#a8822f" opacity=".85"/></g>
+        <ellipse cx="60" cy="38" rx="11" ry="12" fill="#1a1c24"/>
+        <path d="M42,86 L45,58 Q60,48 75,58 L78,86 Z" fill="#e8e0cc"/>
+        <line x1="52" y1="62" x2="68" y2="72" stroke="#800020" stroke-width="3"/><line x1="68" y1="62" x2="52" y2="72" stroke="#800020" stroke-width="3"/>
+        <path d="M50,46 Q60,42 70,46 L68,52 Q60,49 52,52 Z" fill="#101218"/>
+        <path d="M52,45 Q60,50 68,45 L66,49 Q60,53 54,49 Z" fill="#181b23"/>
+        <circle cx="60" cy="42" r="1.5" fill="#D4AF37"/>
+      </svg>
+      <div class="banner-text">
+        <span class="banner-kicker">SPEAKEASY · TRAGOS</span>
+        <h2>LA BARRA</h2>
+        <p class="flavor">"¿Lo de siempre, forastero?" — Sam, el barman</p>
       </div>
-      <button type="button" class="modal-x" data-close="modal-bar">✕</button>
-    </header>
+    </div>
     <div class="item-list" id="bar-list"></div>
   </div>
 </div>
@@ -346,27 +348,29 @@
 <!-- ============ MODAL: MERCADO NEGRO ============ -->
 <div class="modal" id="modal-market">
   <div class="modal-panel deco-frame">
-    <div class="rain-layer" aria-hidden="true"></div>
-    <header class="modal-head">
-      <div class="bar-scene">
-        <svg class="contraband" viewBox="0 0 120 90" aria-hidden="true">
-          <ellipse cx="60" cy="30" rx="34" ry="26" fill="rgba(255,225,160,.10)"/>
-          <path d="M60,4 L60,88" stroke="rgba(255,225,160,.18)" stroke-width="16"/>
-          <path d="M34,88 L40,52 Q60,38 80,52 L86,88 Z" fill="#101218"/>
-          <path d="M44,58 L34,74 M76,58 L86,74" stroke="#101218" stroke-width="9" stroke-linecap="round"/>
-          <ellipse cx="60" cy="42" rx="9" ry="10" fill="#181b23"/>
-          <path d="M40,36 Q60,26 80,36 L76,32 Q60,24 44,32 Z" fill="#08090d"/>
-          <path d="M44,34 L47,22 Q60,16 73,22 L76,34 Q60,26 44,34 Z" fill="#101218"/>
-          <line x1="45" y1="33" x2="75" y2="31" stroke="#D4AF37" stroke-width="1.6" opacity=".7"/>
-          <path d="M50,50 L70,50 L66,60 L54,60 Z" fill="#0b0c11"/>
-          <circle cx="56" cy="41.5" r="1.4" fill="#e8b93c"/><circle cx="64" cy="41.5" r="1.4" fill="#e8b93c"/>
-          <ellipse cx="100" cy="70" rx="14" ry="5" fill="#17140c"/><path d="M88,70 L96,60 L104,60 L112,70 Z" fill="#241f12"/>
-          <line x1="94" y1="64" x2="102" y2="64" stroke="#D4AF37" stroke-width="1" opacity=".6"/>
-        </svg>
-        <div class="scene-text"><h2>EL CALLEJÓN</h2><p class="flavor">"Mercancía fina. Sin preguntas." — El Contrabandista, bajo la lluvia</p></div>
+    <button type="button" class="modal-x" data-close="modal-market" aria-label="Cerrar"><span data-ico="x"></span></button>
+    <div class="shop-banner sb-mkt">
+      <div class="rain-layer" aria-hidden="true"></div>
+      <svg class="banner-scene" viewBox="0 0 120 90" aria-hidden="true">
+        <ellipse cx="60" cy="30" rx="34" ry="26" fill="rgba(255,225,160,.10)"/>
+        <path d="M60,4 L60,88" stroke="rgba(255,225,160,.18)" stroke-width="16"/>
+        <path d="M34,88 L40,52 Q60,38 80,52 L86,88 Z" fill="#101218"/>
+        <path d="M44,58 L34,74 M76,58 L86,74" stroke="#101218" stroke-width="9" stroke-linecap="round"/>
+        <ellipse cx="60" cy="42" rx="9" ry="10" fill="#181b23"/>
+        <path d="M40,36 Q60,26 80,36 L76,32 Q60,24 44,32 Z" fill="#08090d"/>
+        <path d="M44,34 L47,22 Q60,16 73,22 L76,34 Q60,26 44,34 Z" fill="#101218"/>
+        <line x1="45" y1="33" x2="75" y2="31" stroke="#D4AF37" stroke-width="1.6" opacity=".7"/>
+        <path d="M50,50 L70,50 L66,60 L54,60 Z" fill="#0b0c11"/>
+        <circle cx="56" cy="41.5" r="1.4" fill="#e8b93c"/><circle cx="64" cy="41.5" r="1.4" fill="#e8b93c"/>
+        <ellipse cx="100" cy="70" rx="14" ry="5" fill="#17140c"/><path d="M88,70 L96,60 L104,60 L112,70 Z" fill="#241f12"/>
+        <line x1="94" y1="64" x2="102" y2="64" stroke="#D4AF37" stroke-width="1" opacity=".6"/>
+      </svg>
+      <div class="banner-text">
+        <span class="banner-kicker">MERCADO NEGRO</span>
+        <h2>EL CALLEJÓN</h2>
+        <p class="flavor">"Mercancía fina. Sin preguntas." — El Contrabandista, bajo la lluvia</p>
       </div>
-      <button type="button" class="modal-x" data-close="modal-market">✕</button>
-    </header>
+    </div>
     <div class="mkt-tabs"><button type="button" class="mkt-tab active" data-tab="tricks">TRUCOS</button><button type="button" class="mkt-tab" data-tab="amulets">AMULETOS</button></div>
     <div class="item-list" id="mkt-list"></div>
   </div>
@@ -375,7 +379,7 @@
 <!-- ============ MODAL: AYUDA ============ -->
 <div class="modal" id="modal-help">
   <div class="modal-panel deco-frame modal-help">
-    <header class="modal-head"><h2>CÓMO JUGAR</h2><button type="button" class="modal-x" data-close="modal-help">✕</button></header>
+    <header class="modal-head"><h2>CÓMO JUGAR</h2><button type="button" class="modal-x" data-close="modal-help" aria-label="Cerrar"><span data-ico="x"></span></button></header>
     <div class="help-body" id="help-body"></div>
   </div>
 </div>
@@ -389,17 +393,18 @@
   </div>
 </div>
 
-<script src="js/utils.js?v=3"></script>
-<script src="js/audio.js?v=3"></script>
-<script src="js/fx.js?v=3"></script>
-<script src="js/data.js?v=3"></script>
-<script src="js/state.js?v=3"></script>
-<script src="js/ui.js?v=3"></script>
-<script src="js/hub.js?v=3"></script>
-<script src="js/shops.js?v=3"></script>
-<script src="js/blackjack.js?v=3"></script>
-<script src="js/roulette.js?v=3"></script>
-<script src="js/slots.js?v=3"></script>
-<script src="js/main.js?v=3"></script>
+<script src="js/utils.js?v=4"></script>
+<script src="js/icons.js?v=4"></script>
+<script src="js/audio.js?v=4"></script>
+<script src="js/fx.js?v=4"></script>
+<script src="js/data.js?v=4"></script>
+<script src="js/state.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script src="js/hub.js?v=4"></script>
+<script src="js/shops.js?v=4"></script>
+<script src="js/blackjack.js?v=4"></script>
+<script src="js/roulette.js?v=4"></script>
+<script src="js/slots.js?v=4"></script>
+<script src="js/main.js?v=4"></script>
 </body>
 </html>
