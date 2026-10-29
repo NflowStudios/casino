@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noir Gold: Casino Roguelite</title>
+<meta name="description" content="Roguelite noir de casino de los años 30. Saldarás tu deuda con la mafia en el Blackjack, la Ruleta y el Tragamonedas.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230B0C10'/%3E%3Ctext x='16' y='24' font-size='19' text-anchor='middle' fill='%23D4AF37' font-family='Georgia'%3E%E2%99%A6%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Josefin+Sans:wght@300;400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/games.css?v=2">
+</head>
+<body class="tier-0" data-screen="menu">
+<div id="game">
+
+  <!-- ============ MENÚ PRINCIPAL ============ -->
+  <section class="screen active" id="screen-menu">
+    <div class="menu-rays"></div>
+    <div class="menu-cards" aria-hidden="true">
+      <div class="menu-card mc-a"><span class="mc-corner">A</span><span class="mc-suit">♠</span></div>
+      <div class="menu-card mc-back"></div>
+    </div>
+    <div class="menu-title-wrap">
+      <div class="menu-kicker">NFLOW STUDIOS PRESENTA</div>
+      <h1 class="menu-title">NOIR <span>GOLD</span></h1>
+      <div class="menu-sub">CASINO ROGUELITE</div>
+      <div class="menu-tag">Años 30 &bull; Una deuda &bull; Dados cargados &bull; Whiskey</div>
+    </div>
+    <nav class="menu-buttons">
+      <button type="button" class="btn btn-gold btn-deco" id="btn-continue" hidden>CONTINUAR PARTIDA</button>
+      <button type="button" class="btn btn-gold btn-deco" id="btn-new">NUEVA PARTIDA</button>
+      <button type="button" class="btn btn-ghost btn-deco" id="btn-help">CÓMO JUGAR</button>
+    </nav>
+    <footer class="menu-foot"><span id="menu-best"></span><span class="ver">v1.0.0</span></footer>
+  </section>
+
+  <!-- ============ SELECCIÓN DE MODO ============ -->
+  <section class="screen" id="screen-select">
+    <div class="select-head">
+      <button type="button" class="btn btn-ghost btn-deco" data-nav="menu">◄ MENÚ</button>
+      <h2 class="screen-h2">ELIGE TU DESTINO</h2>
+    </div>
+    <div class="mode-cards">
+      <button type="button" class="mode-card" id="mode-story">
+        <div class="mode-art ma-story"><span class="ma-dollar">$</span></div>
+        <h3>MODO HISTORIA</h3>
+        <p class="mode-flavor">"Dos millones de fichas. Tres noches. O acabas en el fondo del río."</p>
+        <ul class="mode-list">
+          <li>Deuda con la familia Moretti: <b>2,000,000</b> fichas</li>
+          <li>Empiezas con <b>1,000</b> fichas en el sótano</li>
+          <li>Sobrevive, asciende al Gran Salón y salda la deuda</li>
+        </ul>
+      </button>
+      <button type="button" class="mode-card" id="mode-infinite">
+        <div class="mode-art ma-inf"><span class="ma-inf-ico">∞</span></div>
+        <h3>MODO INFINITO</h3>
+        <p class="mode-flavor">"Sin deudas. Sin límites. Solo tú contra la casa."</p>
+        <ul class="mode-list">
+          <li>Supervivencia y acumulación de fichas</li>
+          <li>Tu pico de riqueza se registra como puntuación</li>
+          <li>Récord: <b id="mode-best">0</b> fichas</li>
+        </ul>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ HUB DEL CASINO ============ -->
+  <section class="screen" id="screen-hub">
+    <div class="floor-layers" aria-hidden="true">
+      <div class="floor-bg bg0"></div>
+      <div class="floor-bg bg1"></div>
+      <div class="floor-bg bg2"></div>
+      <div class="floor-props">
+        <div class="smoke s1"></div><div class="smoke s2"></div><div class="smoke s3"></div>
+        <div class="column col-l"></div><div class="column col-r"></div>
+        <div class="sign" id="sign"><span id="sign-text">SPEAKEASY</span></div>
+        <div class="chandelier" id="chandelier">
+          <svg viewBox="0 0 220 130" aria-hidden="true">
+            <defs><radialGradient id="chglow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#ffe9b0" stop-opacity=".95"/><stop offset="100%" stop-color="#ffe9b0" stop-opacity="0"/></radialGradient></defs>
+            <ellipse cx="110" cy="60" rx="105" ry="55" fill="url(#chglow)"/>
+            <g stroke="#D4AF37" stroke-width="2.5" fill="none">
+              <path d="M30,14 Q110,-14 190,14"/><path d="M46,20 Q110,-2 174,20"/><path d="M62,26 Q110,10 158,26"/>
+              <line x1="110" y1="0" x2="110" y2="12"/>
+            </g>
+            <g fill="#fff3d6" opacity=".95">
+              <circle cx="30" cy="18" r="4"/><circle cx="62" cy="30" r="4"/><circle cx="110" cy="34" r="5"/><circle cx="158" cy="30" r="4"/><circle cx="190" cy="18" r="4"/>
+              <path d="M26,22 l4,10 4,-10" fill="#e8d9a8"/><path d="M58,34 l4,10 4,-10" fill="#e8d9a8"/><path d="M105,39 l5,13 5,-13" fill="#e8d9a8"/><path d="M154,34 l4,10 4,-10" fill="#e8d9a8"/><path d="M186,22 l4,10 4,-10" fill="#e8d9a8"/>
+            </g>
+            <circle cx="110" cy="60" r="10" fill="#ffedb8"/><circle cx="110" cy="60" r="16" fill="none" stroke="#D4AF37" stroke-width="2" opacity=".6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="hub-body">
+      <div class="hub-head"><div class="tier-badge" id="tier-badge">SÓTANO CLANDESTINO</div></div>
+      <div class="tables">
+        <button type="button" class="door" id="door-bj" data-tip="Veintiuno. Pago 3:2, rinde la mitad.">
+          <span class="door-art da-bj"><i class="da-card"><b>21</b></i></span>
+          <span class="door-name">BLACKJACK</span><span class="door-sub">Mesa de Naipes</span>
+        </button>
+        <button type="button" class="door" id="door-rl" data-tip="Ruleta europea. Pleno 35:1.">
+          <span class="door-art da-rl"><i class="da-wheel"></i></span>
+          <span class="door-name">RULETA</span><span class="door-sub">Rueda Art Déco</span>
+        </button>
+        <button type="button" class="door" id="door-sl" data-tip="Tres carretes. Reten y empuja.">
+          <span class="door-art da-sl"><i class="da-reel">7</i><i class="da-reel">★</i><i class="da-reel">♦</i></span>
+          <span class="door-name">TRAGAMONEDAS</span><span class="door-sub">"El Dorado"</span>
+        </button>
+      </div>
+      <div class="hub-services">
+        <button type="button" class="svc" id="btn-bar" data-tip="Tragos temporales que calman la sospecha.">
+          <span class="svc-ico ico-glass"></span><span class="svc-t">LA BARRA</span><span class="svc-s">Tragos</span>
+        </button>
+        <button type="button" class="svc svc-rain" id="btn-market" data-tip="Trucos y amuletos. El Pit Boss no aprueba.">
+          <span class="svc-ico ico-coat"></span><span class="svc-t">EL CALLEJÓN</span><span class="svc-s">Mercado Negro</span>
+        </button>
+        <button type="button" class="svc" id="btn-phone" data-tip="Una llamada a la familia Moretti.">
+          <span class="svc-ico ico-phone">☎</span><span class="svc-t">TELÉFONO</span><span class="svc-s" id="phone-note">Deuda</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLACKJACK ============ -->
+  <section class="screen game-screen" id="screen-blackjack">
+    <div class="game-head">
+      <button type="button" class="btn btn-ghost btn-deco" data-leave="bj">◄ CASINO</button>
+      <div class="game-title">BLACKJACK <small class="pay-tag">Paga 3:2</small></div>
+      <div class="game-info"><span id="bj-cap"></span> <span class="mult-badge" id="bj-mult">×1.00</span></div>
+    </div>
+    <div class="game-stage">
+      <div class="bj-felt">
+        <div class="bj-row bj-dealer-row">
+          <div class="hand-label">CRUPIER <span class="count-badge" id="bj-dealer-count"></span></div>
+          <div class="hand" id="bj-dealer-hand"></div>
+        </div>
+        <div class="bj-msg" id="bj-msg">Haz tu apuesta y pide carta</div>
+        <div class="bj-row bj-player-row">
+          <div class="hand-label you">TÚ <span class="count-badge" id="bj-count"></span></div>
+          <div class="hand" id="bj-hand"></div>
+        </div>
+        <div class="bj-insurance" id="bj-insurance-note" hidden></div>
+      </div>
+      <aside class="game-side">
+        <div class="side-block" id="bj-trick-block">
+          <h4 class="side-title">TRUCOS</h4>
+          <div id="bj-tricks" class="trick-panel"></div>
+          <div class="side-empty" id="bj-tricks-empty">Sin trucos. El mercado del callejón vende algunos…</div>
+        </div>
+        <div class="side-block count-box" id="bj-countbox" hidden>
+          <h4 class="side-title">CARTAS MARCADAS</h4>
+          <div class="count-grid"><span>Conteo <b id="bj-rc">0</b></span><span>Real <b id="bj-tc">0</b></span></div>
+          <small class="count-note">Rondas restantes: <b id="bj-mr">0</b></small>
+        </div>
+      </aside>
+    </div>
+    <div class="game-controls" id="bj-controls"></div>
+  </section>
+
+  <!-- ============ RULETA ============ -->
+  <section class="screen game-screen" id="screen-roulette">
+    <div class="game-head">
+      <button type="button" class="btn btn-ghost btn-deco" data-leave="rl">◄ CASINO</button>
+      <div class="game-title">RULETA ART DÉCO <small class="pay-tag">Pleno 35:1</small></div>
+      <div class="game-info"><span id="rl-cap"></span> <span class="mult-badge" id="rl-mult">×1.00</span></div>
+    </div>
+    <div class="game-stage rl-stage">
+      <div class="rl-left">
+        <div class="rl-wheelbox">
+          <div class="rl-pointer" aria-hidden="true"></div>
+          <div class="rl-wheel" id="rl-wheel"></div>
+          <div class="rl-ball" id="rl-ball" aria-hidden="true"></div>
+        </div>
+        <div class="rl-result" id="rl-result"><span class="rl-res-ico">✦</span><span id="rl-res-num">—</span></div>
+        <div class="rl-history" id="rl-history"></div>
+        <div class="trick-panel" id="rl-tricks"></div>
+      </div>
+      <div class="rl-right">
+        <div class="rl-board-wrap"><div id="rl-board"></div></div>
+        <div class="rl-controls">
+          <div class="rl-chip-row" id="rl-chips"></div>
+          <div class="rl-bet-line">
+            <button type="button" class="btn btn-ghost btn-sm" id="rl-undo">DESHACER</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="rl-clear">LIMPIAR</button>
+            <span class="rl-total">EN JUEGO: <b id="rl-bet-total">0</b></span>
+          </div>
+          <button type="button" class="btn btn-gold btn-deco btn-big" id="rl-spin">GIRAR</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRAGAMONEDAS ============ -->
+  <section class="screen game-screen" id="screen-slots">
+    <div class="game-head">
+      <button type="button" class="btn btn-ghost btn-deco" data-leave="sl">◄ CASINO</button>
+      <div class="game-title">TRAGAMONEDAS <small class="pay-tag">"El Dorado"</small></div>
+      <div class="game-info"><span id="sl-cap"></span> <span class="mult-badge" id="sl-mult">×1.00</span></div>
+    </div>
+    <div class="game-stage sl-stage">
+      <div class="sl-paytable deco-frame" id="sl-paytable"></div>
+      <div class="sl-cabinet deco-frame">
+        <div class="sl-marquee"><span class="sl-mq-star">✦</span> EL DORADO <span class="sl-mq-star">✦</span></div>
+        <div class="sl-reels" id="sl-reels">
+          <div class="sl-reel" data-reel="0"><div class="sl-window"><div class="sl-strip"></div></div>
+            <div class="reel-foot"><button type="button" class="reel-hold" data-reel="0">RETENER</button><button type="button" class="nudge-btn" data-reel="0" data-dir="-1">▲</button><button type="button" class="nudge-btn" data-reel="0" data-dir="1">▼</button></div></div>
+          <div class="sl-reel" data-reel="1"><div class="sl-window"><div class="sl-strip"></div></div>
+            <div class="reel-foot"><button type="button" class="reel-hold" data-reel="1">RETENER</button><button type="button" class="nudge-btn" data-reel="1" data-dir="-1">▲</button><button type="button" class="nudge-btn" data-reel="1" data-dir="1">▼</button></div></div>
+          <div class="sl-reel" data-reel="2"><div class="sl-window"><div class="sl-strip"></div></div>
+            <div class="reel-foot"><button type="button" class="reel-hold" data-reel="2">RETENER</button><button type="button" class="nudge-btn" data-reel="2" data-dir="-1">▲</button><button type="button" class="nudge-btn" data-reel="2" data-dir="1">▼</button></div></div>
+        </div>
+        <div class="sl-lever" id="sl-lever"><div class="sl-lever-slot"></div><div class="sl-knob" id="sl-knob"></div></div>
+        <div class="sl-controls">
+          <div class="sl-chip-row" id="sl-chips"></div>
+          <button type="button" class="btn btn-gold btn-deco btn-big" id="sl-spin">GIRAR</button>
+          <span class="sl-nudge-count" id="sl-nudges"></span>
+          <button type="button" class="btn btn-ghost btn-deco" id="sl-collect" hidden>COBRAR</button>
+        </div>
+        <div class="sl-msg" id="sl-msg">Tira de la palanca</div>
+        <div class="trick-panel sl-tricks" id="sl-tricks"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HABITACIÓN TRASERA ============ -->
+  <section class="screen" id="screen-backroom">
+    <div class="br-room">
+      <div class="br-bulb" aria-hidden="true"><i class="br-cord"></i><i class="br-glow"></i><i class="br-lamp"></i></div>
+      <div class="br-mob m1" aria-hidden="true"></div><div class="br-mob m2" aria-hidden="true"></div>
+      <h2 class="br-title">LA HABITACIÓN TRASERA</h2>
+      <p class="br-flavor" id="br-flavor">El Pit Boss te toma del hombro. La puerta se cierra a tus espaldas…</p>
+      <div class="br-choices" id="br-choices"></div>
+      <div class="br-coin" id="br-coin" hidden><div class="coin-face cf-h">◆</div><div class="coin-face cf-t">✕</div></div>
+    </div>
+  </section>
+
+  <!-- ============ BANCARROTA ============ -->
+  <section class="screen" id="screen-gameover">
+    <div class="go-wrap deco-frame">
+      <div class="go-stamp">LIQUIDADO</div>
+      <h2 class="go-title">EXPEDIENTE: BANCARROTA</h2>
+      <p class="go-flavor">Cero fichas. La casa siempre gana… hasta la próxima.</p>
+      <div class="go-cols">
+        <div class="go-col"><h4>LA PARTIDA</h4><ul id="go-stats" class="stat-list"></ul></div>
+        <div class="go-col"><h4>PERDISTE</h4><ul id="go-lost" class="stat-list"></ul></div>
+        <div class="go-col"><h4>EL LEGADO PERSISTE</h4><ul id="go-unlocks" class="stat-list"></ul></div>
+      </div>
+      <div class="go-btns">
+        <button type="button" class="btn btn-gold btn-deco" id="btn-go-again">OTRA PARTIDA</button>
+        <button type="button" class="btn btn-ghost btn-deco" data-nav="menu">MENÚ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VICTORIA ============ -->
+  <section class="screen" id="screen-victory">
+    <div class="v-wrap deco-frame">
+      <div class="v-laurel">✦ ✦ ✦</div>
+      <h2 class="v-title">DEUDA SALDADA</h2>
+      <p class="v-flavor">La familia Moretti recibe sus 2,000,000 de fichas. El don asiente:<br>"Tienes palabra de caballero. Las puertas del Gran Salón quedan abiertas para siempre."</p>
+      <ul id="v-stats" class="stat-list v-stats"></ul>
+      <div class="go-btns">
+        <button type="button" class="btn btn-gold btn-deco" id="btn-v-legend">CONTINUAR COMO LEYENDA</button>
+        <button type="button" class="btn btn-ghost btn-deco" id="btn-v-new">NUEVA PARTIDA</button>
+        <button type="button" class="btn btn-ghost btn-deco" data-nav="menu">MENÚ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HUD PERSISTENTE ============ -->
+  <header id="hud">
+    <div class="hud-left">
+      <div class="hud-chips"><span class="chip-ico"></span><b id="hud-chips">0</b><span id="hud-chips-delta"></span></div>
+      <div class="hud-mode">
+        <span class="hud-mode-label" id="hud-mode-label">HISTORIA</span>
+        <div class="debt-bar" id="hud-debt"><i id="hud-debt-fill"></i><em id="hud-debt-label"></em></div>
+      </div>
+    </div>
+    <div class="hud-sus" data-tip="Sube al usar trucos. Baja con rondas limpias y tragos. Al 100%: Habitación Trasera.">
+      <span class="sus-title">SOSPECHA</span>
+      <div class="sus-track"><i id="sus-fill"></i></div>
+      <b class="sus-num" id="sus-num">0%</b>
+    </div>
+    <div class="hud-right">
+      <button type="button" class="icon-btn" id="btn-sound" data-tip="Sonido [M]"><span id="sound-ico">♪</span></button>
+      <button type="button" class="icon-btn" id="btn-exit" data-tip="Salir al menú">☰</button>
+    </div>
+  </header>
+
+  <!-- Pit Boss: acecha en la esquina -->
+  <aside id="pitboss" data-tip="El Jefe de Sala vigila cada truco que haces.">
+    <div class="pb-bubble" id="pb-bubble" hidden></div>
+    <svg viewBox="0 0 150 210" aria-hidden="true">
+      <defs>
+        <pattern id="pinstripe" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#14161c"/><line x1="5" y1="0" x2="5" y2="10" stroke="#262b38" stroke-width="3"/></pattern>
+      </defs>
+      <g class="pb-smoke">
+        <circle class="pks p1" cx="126" cy="96" r="4" /><circle class="pks p2" cx="132" cy="86" r="5"/><circle class="pks p3" cx="124" cy="76" r="3"/>
+      </g>
+      <path d="M18,210 L30,128 Q75,106 120,128 L132,210 Z" fill="url(#pinstripe)" stroke="#08090d" stroke-width="2"/>
+      <path d="M46,210 L52,138 L62,132 L70,142 L78,132 L88,138 L94,210 Z" fill="#101218" opacity=".5"/>
+      <path d="M28,160 Q75,146 122,160 L122,172 Q75,158 28,172 Z" fill="#0b0c11"/>
+      <path d="M60,124 L75,166 L90,124 Q75,114 60,124 Z" fill="#e8e0cc"/>
+      <path d="M70,128 L75,158 L80,128 L77,126 L75,132 L73,126 Z" fill="#800020"/>
+      <ellipse cx="75" cy="100" rx="17" ry="19" fill="#181b23"/>
+      <path d="M46,88 Q75,72 104,88 L100,84 Q75,68 50,84 Z" fill="#08090d"/>
+      <path d="M52,86 L55,62 Q75,50 95,62 L98,86 Q75,74 52,86 Z" fill="#101218"/>
+      <line x1="53" y1="84" x2="97" y2="80" stroke="#D4AF37" stroke-width="2.5" opacity=".8"/>
+      <circle class="pb-eye" cx="68" cy="100" r="2.3"/><circle class="pb-eye" cx="83" cy="100" r="2.3"/>
+      <rect x="92" y="108" width="17" height="4" rx="1.5" fill="#7a5c33" transform="rotate(12 100 110)"/>
+      <circle class="pb-ember" cx="111" cy="105" r="2"/>
+    </svg>
+  </aside>
+
+  <!-- Inventario activo (tragos, trucos, amuletos) -->
+  <div id="inv" aria-label="Efectos activos"></div>
+</div>
+
+<!-- Capas globales de juego (juice) -->
+<div id="vignette" aria-hidden="true"></div>
+<canvas id="fx-canvas" aria-hidden="true"></canvas>
+<div id="toasts" aria-live="polite"></div>
+<div id="tooltip" hidden></div>
+
+<!-- ============ MODAL: LA BARRA ============ -->
+<div class="modal" id="modal-bar" hidden>
+  <div class="modal-panel deco-frame">
+    <header class="modal-head">
+      <div class="bar-scene">
+        <svg class="bartender" viewBox="0 0 120 90" aria-hidden="true">
+          <rect x="0" y="58" width="120" height="6" fill="#3a2b18"/><rect x="0" y="64" width="120" height="26" fill="#241a0e"/>
+          <g fill="#0f0c14" opacity=".55"><rect x="6" y="6" width="8" height="18" rx="2"/><rect x="18" y="10" width="7" height="14" rx="2"/><rect x="28" y="4" width="9" height="20" rx="2"/><rect x="94" y="8" width="8" height="16" rx="2"/><rect x="106" y="5" width="8" height="19" rx="2"/></g>
+          <g><rect x="104" y="12" width="6" height="10" rx="1" fill="#2f7d46" opacity=".8"/><rect x="94" y="16" width="6" height="8" rx="1" fill="#7a0d26" opacity=".8"/><rect x="10" y="12" width="6" height="10" rx="1" fill="#a8822f" opacity=".85"/></g>
+          <ellipse cx="60" cy="38" rx="11" ry="12" fill="#1a1c24"/>
+          <path d="M42,86 L45,58 Q60,48 75,58 L78,86 Z" fill="#e8e0cc"/>
+          <line x1="52" y1="62" x2="68" y2="72" stroke="#800020" stroke-width="3"/><line x1="68" y1="62" x2="52" y2="72" stroke="#800020" stroke-width="3"/>
+          <path d="M50,46 Q60,42 70,46 L68,52 Q60,49 52,52 Z" fill="#101218"/>
+          <path d="M52,45 Q60,50 68,45 L66,49 Q60,53 54,49 Z" fill="#181b23"/>
+          <circle cx="60" cy="42" r="1.5" fill="#D4AF37"/>
+        </svg>
+        <div class="scene-text"><h2>LA BARRA</h2><p class="flavor">"¿Lo de siempre, forastero?" — Sam, el barman</p></div>
+      </div>
+      <button type="button" class="modal-x" data-close="modal-bar">✕</button>
+    </header>
+    <div class="item-list" id="bar-list"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL: MERCADO NEGRO ============ -->
+<div class="modal" id="modal-market" hidden>
+  <div class="modal-panel deco-frame">
+    <div class="rain-layer" aria-hidden="true"></div>
+    <header class="modal-head">
+      <div class="bar-scene">
+        <svg class="contraband" viewBox="0 0 120 90" aria-hidden="true">
+          <ellipse cx="60" cy="30" rx="34" ry="26" fill="rgba(255,225,160,.10)"/>
+          <path d="M60,4 L60,88" stroke="rgba(255,225,160,.18)" stroke-width="16"/>
+          <path d="M34,88 L40,52 Q60,38 80,52 L86,88 Z" fill="#101218"/>
+          <path d="M44,58 L34,74 M76,58 L86,74" stroke="#101218" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="60" cy="42" rx="9" ry="10" fill="#181b23"/>
+          <path d="M40,36 Q60,26 80,36 L76,32 Q60,24 44,32 Z" fill="#08090d"/>
+          <path d="M44,34 L47,22 Q60,16 73,22 L76,34 Q60,26 44,34 Z" fill="#101218"/>
+          <line x1="45" y1="33" x2="75" y2="31" stroke="#D4AF37" stroke-width="1.6" opacity=".7"/>
+          <path d="M50,50 L70,50 L66,60 L54,60 Z" fill="#0b0c11"/>
+          <circle cx="56" cy="41.5" r="1.4" fill="#e8b93c"/><circle cx="64" cy="41.5" r="1.4" fill="#e8b93c"/>
+          <ellipse cx="100" cy="70" rx="14" ry="5" fill="#17140c"/><path d="M88,70 L96,60 L104,60 L112,70 Z" fill="#241f12"/>
+          <line x1="94" y1="64" x2="102" y2="64" stroke="#D4AF37" stroke-width="1" opacity=".6"/>
+        </svg>
+        <div class="scene-text"><h2>EL CALLEJÓN</h2><p class="flavor">"Mercancía fina. Sin preguntas." — El Contrabandista, bajo la lluvia</p></div>
+      </div>
+      <button type="button" class="modal-x" data-close="modal-market">✕</button>
+    </header>
+    <div class="mkt-tabs"><button type="button" class="mkt-tab active" data-tab="tricks">TRUCOS</button><button type="button" class="mkt-tab" data-tab="amulets">AMULETOS</button></div>
+    <div class="item-list" id="mkt-list"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL: AYUDA ============ -->
+<div class="modal" id="modal-help" hidden>
+  <div class="modal-panel deco-frame modal-help">
+    <header class="modal-head"><h2>CÓMO JUGAR</h2><button type="button" class="modal-x" data-close="modal-help">✕</button></header>
+    <div class="help-body" id="help-body"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL: CONFIRMACIÓN ============ -->
+<div class="modal" id="modal-confirm" hidden>
+  <div class="modal-panel deco-frame modal-confirm">
+    <h3 id="cf-title">¿Seguro?</h3>
+    <p id="cf-text"></p>
+    <div class="cf-btns"><button type="button" class="btn btn-gold btn-deco" id="cf-ok">ACEPTAR</button><button type="button" class="btn btn-ghost btn-deco" id="cf-cancel">CANCELAR</button></div>
+  </div>
+</div>
+
+<script src="js/utils.js?v=2"></script>
+<script src="js/audio.js?v=2"></script>
+<script src="js/fx.js?v=2"></script>
+<script src="js/data.js?v=2"></script>
+<script src="js/state.js?v=2"></script>
+<script src="js/ui.js?v=2"></script>
+<script src="js/hub.js?v=2"></script>
+<script src="js/shops.js?v=2"></script>
+<script src="js/blackjack.js?v=2"></script>
+<script src="js/roulette.js?v=2"></script>
+<script src="js/slots.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
+</body>
+</html>
