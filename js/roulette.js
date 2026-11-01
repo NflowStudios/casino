@@ -24,6 +24,7 @@ const RL = {
     UI.renderMult('roulette', 'rl-mult');
     UI.show('roulette');
     this.placeBall(0, 126, true);
+    requestAnimationFrame(() => this._updHint && this._updHint());
   },
   leave() {
     const total = this.betTotal();
@@ -128,6 +129,17 @@ const RL = {
       const cell = e.target.closest('.rl-cell');
       if (cell) this.removeBet(cell.dataset.key);
     });
+    /* indicador de desplazamiento del tablero (móvil) */
+    this._updHint = () => {
+      const wrap = b.parentElement;
+      const hint = wrap.parentElement.querySelector('.rl-scroll-hint');
+      if (hint) hint.classList.toggle('on',
+        wrap.scrollWidth - wrap.clientWidth > 8 &&
+        wrap.scrollLeft < wrap.scrollWidth - wrap.clientWidth - 8);
+    };
+    U.on(b.parentElement, 'scroll', this._updHint);
+    U.on(window, 'resize', this._updHint);
+    this._updHint();
   },
   onCellClick(cell) {
     if (this.spinning) return;
