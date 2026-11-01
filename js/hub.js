@@ -25,7 +25,7 @@ const Hub = {
     const ready = r.mode === 'story' && r.chips >= r.debt;
     phone.classList.toggle('phone-ready', ready);
     note.textContent = r.mode === 'story'
-      ? (ready ? '¡SALDAR DEUDA!' : 'Faltan ' + U.fmt(r.debt - r.chips))
+      ? (ready ? '¡SALDAR DEUDA!' : 'Faltan ' + U.fmtC(r.debt - r.chips))
       : 'Sin deudas';
   },
   async phoneAction() {

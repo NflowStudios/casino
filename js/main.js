@@ -133,22 +133,22 @@ const App = {
     document.body.classList.remove('crisis');
     const st = U.$('go-stats'), lost = U.$('go-lost'), unl = U.$('go-unlocks');
     st.innerHTML =
-      '<li>Modo: <b>' + (r.mode === 'story' ? 'Historia' : 'Infinito') + '</b></li>' +
-      '<li>Pico de riqueza: <b>' + U.fmt(r.stats.peak) + '</b></li>' +
-      '<li>Deuda pendiente: <b class="neg">' + (r.mode === 'story' ? U.fmt(r.debt) : '—') + '</b></li>' +
-      '<li>Manos jugadas: <b>' + r.stats.hands + '</b></li>' +
-      '<li>Trucos usados: <b>' + r.stats.tricksUsed + '</b></li>' +
-      '<li>Mayor victoria: <b class="pos">' + U.fmt(r.stats.biggestWin) + '</b></li>';
+      '<li><span>Modo</span><b>' + (r.mode === 'story' ? 'Historia' : 'Infinito') + '</b></li>' +
+      '<li><span>Pico de riqueza</span><b>' + U.fmt(r.stats.peak) + '</b></li>' +
+      '<li><span>Deuda pendiente</span><b class="neg">' + (r.mode === 'story' ? U.fmt(r.debt) : '—') + '</b></li>' +
+      '<li><span>Manos jugadas</span><b>' + r.stats.hands + '</b></li>' +
+      '<li><span>Trucos usados</span><b>' + r.stats.tricksUsed + '</b></li>' +
+      '<li><span>Mayor victoria</span><b class="pos">' + U.fmt(r.stats.biggestWin) + '</b></li>';
     const lostItems = [];
     if (r.drinks.length) lostItems.push('<li>' + r.drinks.length + ' trago(s) activos</li>');
     if (r.tricks.length) lostItems.push('<li>' + r.tricks.filter((t) => t.charges > 0).length + ' truco(s) con cargas</li>');
     if (r.amulets.length) lostItems.push('<li>' + r.amulets.length + ' amuleto(s): ' + r.amulets.map((a) => DATA.itemName(a)).join(', ') + '</li>');
-    lost.innerHTML = lostItems.join('') || '<li>Solo tu orgullo.</li>';
+    lost.innerHTML = lostItems.join('') || '<li><span>Solo tu orgullo.</span></li>';
     unl.innerHTML =
-      '<li>' + State.meta.unlocked.length + ' objetos en el catálogo</li>' +
-      (r.unlocksThisRun.length ? '<li class="pos">Desbloqueado esta partida: ' + r.unlocksThisRun.map((id) => DATA.itemName(id)).join(', ') + '</li>' : '') +
-      '<li>Récord Infinito: <b>' + U.fmt(State.meta.best) + '</b></li>' +
-      '<li style="color:var(--cream-dim)">El mercado negro recuerda a sus clientes…</li>';
+      '<li><span>Catálogo</span><b>' + State.meta.unlocked.length + ' objetos</b></li>' +
+      (r.unlocksThisRun.length ? '<li class="pos"><span>Nuevo esta partida</span><b>' + r.unlocksThisRun.map((id) => DATA.itemName(id)).join(', ') + '</b></li>' : '') +
+      '<li><span>Récord Infinito</span><b>' + U.fmt(State.meta.best) + '</b></li>' +
+      '<li style="color:var(--cream-dim)"><span>El mercado negro recuerda a sus clientes…</span></li>';
     UI.show('gameover');
     FX.flash('rgba(128,0,32,.3)', 800);
   },
@@ -160,11 +160,11 @@ const App = {
     Sound.sfx.jackpot();
     setTimeout(() => FX.goldRain(2200), 1300);
     U.$('v-stats').innerHTML =
-      '<li>Pico de riqueza: <b>' + U.fmt(r.stats.peak) + '</b></li>' +
-      '<li>Manos jugadas: <b>' + r.stats.hands + '</b></li>' +
-      '<li>Trucos usados: <b>' + r.stats.tricksUsed + '</b></li>' +
-      '<li>Fichas restantes: <b class="pos">' + U.fmt(r.chips) + '</b></li>' +
-      '<li>Victorias totales: <b>' + State.meta.victories + '</b></li>';
+      '<li><span>Pico de riqueza</span><b>' + U.fmt(r.stats.peak) + '</b></li>' +
+      '<li><span>Manos jugadas</span><b>' + r.stats.hands + '</b></li>' +
+      '<li><span>Trucos usados</span><b>' + r.stats.tricksUsed + '</b></li>' +
+      '<li><span>Fichas restantes</span><b class="pos">' + U.fmt(r.chips) + '</b></li>' +
+      '<li><span>Victorias totales</span><b>' + State.meta.victories + '</b></li>';
     U.$('btn-v-legend').hidden = r.chips < 100;
     UI.show('victory');
   },
@@ -172,18 +172,27 @@ const App = {
   /* ---------- ayuda ---------- */
   renderHelp() {
     U.$('help-body').innerHTML =
-      '<h3>EL OBJETIVO</h3>' +
-      '<p><b>Modo Historia:</b> salda la deuda de <span class="gold">2,000,000</span> de fichas con la familia Moretti antes de quedarte sin nada. Cuando reúnas el dinero, usa el <b>Teléfono</b> del casino. <b>Modo Infinito:</b> sobrevive y acumula tu pico de riqueza. Caer a 0 fichas es <b>bancarrota permanente</b>: pierdes tragos, trucos y amuletos de la partida. El catálogo desbloqueado persiste entre partidas.</p>' +
-      '<h3>LA SOSPECHA</h3>' +
-      '<p>Cada truco que uses aumenta la sospecha del <b>Pit Boss</b> (esquina inferior izquierda). Las rondas limpias y ciertos tragos la reducen. Al llegar a <b>100%</b> te llevan a la <b>Habitación Trasera</b>: sobornar (35% de tus fichas), entregar todos tus trucos, o jugarle una moneda a la suerte.</p>' +
-      '<h3>LA ECONOMÍA NOIR</h3>' +
-      '<p><b>La Barra (Tragos):</b> mejoras temporales por rondas. <b>El Callejón (Mercado Negro):</b> trucos con cargas (alto riesgo, alta recompensa) y amuletos pasivos permanentes por partida. Ciertas combinaciones activan <b>Sinergias VIP</b> (ej.: Old Fashioned + Reloj de Oro = <span class="gold">Hora Dorada</span>).</p>' +
-      '<h3>LAS MESAS</h3>' +
-      '<p><b>Blackjack:</b> pide, plántate, dobla o ríndete. Apuestas laterales: Pareja Perfecta y 21+3. Con <i>Cartas Marcadas</i> verás la carta oculta y el conteo real de cartas.</p>' +
-      '<p><b>Ruleta Art Déco:</b> apuesta a <b>número pleno</b> (paga 35:1), al <b>color</b> o a <b>par/impar</b> (pagan 1:1). La <i>Sortija de la Croupier</i> cubre números adyacentes. En los últimos giros, la cámara se acerca…</p>' +
-      '<p><b>Tragamonedas:</b> elige tu ficha, tira de la palanca y alinea tres símbolos. <b>★ es el comodín:</b> sustituye a cualquier símbolo para completar la combinación.</p>' +
-      '<h3>CONTROLES</h3>' +
-      '<p>Clic para todo. Botón derecho retira fichas de la ruleta. <b>M</b> silencia. <b>Esc</b> cierra ventanas. El sonido es jazz sintetizado en vivo: cada noche suena distinto.</p>';
+      '<div class="help-grid">' +
+      '<section class="help-sec"><h3>EL OBJETIVO</h3>' +
+      '<p><b>Modo Historia:</b> salda la deuda de <span class="gold">2,000,000</span> de fichas con la familia Moretti. Cuando reúnas el dinero, usa el <b>Teléfono</b> del casino. <b>Modo Infinito:</b> sobrevive y acumula tu pico de riqueza.</p>' +
+      '<p>Caer a 0 fichas es <b>bancarrota permanente</b>: pierdes tragos, trucos y amuletos. El catálogo desbloqueado persiste entre partidas.</p></section>' +
+      '<section class="help-sec"><h3>LA SOSPECHA</h3>' +
+      '<p>Cada truco aumenta la sospecha del <b>Pit Boss</b> (esquina inferior izquierda). Las rondas limpias y ciertos tragos la reducen.</p>' +
+      '<p>Al llegar a <b>100%</b> te llevan a la <b>Habitación Trasera</b>: sobornar (35% de tus fichas), entregar todos tus trucos, o jugarle una moneda a la suerte.</p></section>' +
+      '<section class="help-sec"><h3>LA ECONOMÍA NOIR</h3>' +
+      '<p><b>La Barra (Tragos):</b> mejoras temporales por rondas.</p>' +
+      '<p><b>El Callejón (Mercado Negro):</b> trucos con cargas y amuletos pasivos por partida.</p>' +
+      '<p>Ciertas combinaciones activan <b>Sinergias VIP</b> (ej.: Old Fashioned + Reloj de Oro = <span class="gold">Hora Dorada</span>).</p></section>' +
+      '<section class="help-sec"><h3>CONTROLES</h3>' +
+      '<p>Clic para todo. Botón derecho retira fichas de la ruleta.</p>' +
+      '<p><b>M</b> silencia · <b>Esc</b> cierra ventanas.</p>' +
+      '<p>El sonido es jazz sintetizado en vivo: cada noche suena distinto.</p></section>' +
+      '<section class="help-sec wide"><h3>LAS MESAS</h3><div class="help-tables">' +
+      '<div class="help-table"><h5>♦ BLACKJACK</h5><p>Pide, plántate, dobla o ríndete. Apuestas laterales: Pareja Perfecta y 21+3. Con <i>Cartas Marcadas</i> verás la carta oculta y el conteo real.</p></div>' +
+      '<div class="help-table"><h5>♦ RULETA ART DÉCO</h5><p>Apuesta a <b>número pleno</b> (paga 35:1), al <b>color</b> o a <b>par/impar</b> (pagan 1:1). La <i>Sortija de la Croupier</i> cubre adyacentes. En los últimos giros, la cámara se acerca…</p></div>' +
+      '<div class="help-table"><h5>♦ TRAGAMONEDAS</h5><p>Elige tu ficha, tira de la palanca y alinea tres símbolos. <b>★ es el comodín:</b> sustituye a cualquier símbolo.</p></div>' +
+      '</div></section>' +
+      '</div>';
   }
 };
 App.init();

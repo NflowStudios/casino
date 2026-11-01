@@ -10,6 +10,12 @@ const U = {
     return e;
   },
   fmt(n) { return Math.round(n).toLocaleString('es-MX'); },
+  fmtC(n) {
+    n = Math.round(n);
+    if (n >= 1000000) return (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1).replace('.', ',') + 'M';
+    if (n >= 10000) return Math.round(n / 1000) + 'K';
+    return n.toLocaleString('es-MX');
+  },
   clamp: (v, a, b) => Math.max(a, Math.min(b, v)),
   lerp: (a, b, t) => a + (b - a) * t,
   rand: () => Math.random(),
@@ -43,6 +49,12 @@ const U = {
   toast(msg, type, ms) {
     const box = U.$('toasts');
     if (!box) return;
+    /* En las mesas de juego el toast va centrado sobre el tablero:
+       una sola ranura para que nunca se apile sobre el paño */
+    const scr = document.body.dataset.screen || '';
+    if (scr === 'blackjack' || scr === 'roulette' || scr === 'slots') {
+      while (box.firstChild) box.firstChild.remove();
+    }
     const t = U.el('div', 'toast t-' + (type || 'info'), msg);
     box.appendChild(t);
     setTimeout(() => t.remove(), ms || 3700);
@@ -67,6 +79,17 @@ const U = {
   }
   function move(e) {
     if (!cur || tip.hidden) return;
+    /* Botones grandes del hub: tooltip anclado y centrado sobre el elemento,
+       nunca flotando sobre botones vecinos */
+    if (cur.classList.contains('svc') || cur.classList.contains('door')) {
+      const r = cur.getBoundingClientRect();
+      const x = U.clamp(r.left + r.width / 2 - tip.offsetWidth / 2, 6, window.innerWidth - tip.offsetWidth - 6);
+      const above = r.top - tip.offsetHeight - 10 > 4;
+      const y = above ? r.top - tip.offsetHeight - 10 : r.bottom + 10;
+      tip.style.left = x + 'px';
+      tip.style.top = y + 'px';
+      return;
+    }
     const x = U.clamp(e.clientX + 14, 4, window.innerWidth - tip.offsetWidth - 8);
     const y = U.clamp(e.clientY + 16, 4, window.innerHeight - tip.offsetHeight - 8);
     tip.style.left = x + 'px';
