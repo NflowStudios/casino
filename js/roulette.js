@@ -233,7 +233,7 @@ const RL = {
     return 0;
   },
   sampleResult() {
-    const luck = State.hasAmulet('pata') ? 0.05 : 0;
+    const luck = State.luckBonus();
     const bias = this.biasColor ? (State.synActive('fortuna') ? 4 : 3) : 1;
     const w = [];
     for (let n = 0; n <= 36; n++) {
@@ -332,6 +332,7 @@ const RL = {
 
     // pagos (con multiplicadores de tragos/sinergias)
     const mult = State.payoutMult('roulette');
+    const total = this.betTotal();
     let ret = 0;
     for (const k in this.bets) {
       let r = this.payoutFor(k, this.bets[k].total, n);
@@ -355,6 +356,12 @@ const RL = {
     } else {
       Sound.sfx.lose();
       U.toast('La rueda no te sonríe. La casa se queda tu apuesta.', 'danger');
+    }
+    // racha y moneda del mendigo: solo cuenta lo que supera lo apostado
+    if (ret > total) State.bumpStreak();
+    else {
+      State.breakStreak();
+      if (total - ret > 0) State.mendigoRefund(total - ret);
     }
 
     this.bets = {};
@@ -423,6 +430,15 @@ const RL = {
       b.setAttribute('data-tip', def.desc);
       b.disabled = this.spinning || this.biasColor !== null;
       b.onclick = () => {
+        if (t.id === 'dadosmellados') {
+          if (!State.useTrick('dadosmellados')) return;
+          this.usedTrickThisSpin = true;
+          State.addPayoutBuff('Dados Mellados', ['roulette'], 1.10, 3);
+          U.toast('Las mellas engañan al plato: pago +10% en Ruleta durante 3 giros.', 'sus', 4200);
+          this.renderTrickPanel();
+          UI.renderMult('roulette', 'rl-mult');
+          return;
+        }
         this.armedDados = !this.armedDados;
         if (this.armedDados) U.toast('Elige ROJO o NEGRO en el tablero para lastrar el plato.', 'info');
         this.renderTrickPanel();

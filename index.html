@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Josefin+Sans:wght@300;400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=7">
-<link rel="stylesheet" href="css/games.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
+<link rel="stylesheet" href="css/games.css?v=8">
 </head>
 <body class="tier-0" data-screen="menu">
 <div id="game">
@@ -33,7 +33,7 @@
       <button type="button" class="btn btn-gold btn-deco" id="btn-new">NUEVA PARTIDA</button>
       <button type="button" class="btn btn-ghost btn-deco" id="btn-help">CÓMO JUGAR</button>
     </nav>
-    <footer class="menu-foot"><span id="menu-best"></span><span class="ver">v1.3.0</span></footer>
+    <footer class="menu-foot"><span id="menu-best"></span><span class="ver">v1.4.0</span></footer>
   </section>
 
   <!-- ============ SELECCIÓN DE MODO ============ -->
@@ -107,6 +107,10 @@
         <button type="button" class="door" id="door-sl" data-tip="Tres carretes. Comodín ★.">
           <span class="door-art" data-scene="sl"></span>
           <span class="door-name">TRAGAMONEDAS</span><span class="door-sub">"El Dorado"</span>
+        </button>
+        <button type="button" class="door door-hr" id="door-hr" data-tip="Seis corredores, una recta. Paga lo que dicte la pizarra.">
+          <span class="door-art" data-scene="hr"></span>
+          <span class="door-name">HIPÓDROMO</span><span class="door-sub">Nocturno · 6 corredores</span>
         </button>
       </div>
       <div class="hub-services">
@@ -219,6 +223,35 @@
     </div>
   </section>
 
+  <!-- ============ HIPÓDROMO NOCTURNO ============ -->
+  <section class="screen game-screen" id="screen-races">
+    <div class="game-head">
+      <button type="button" class="btn btn-ghost btn-deco" data-leave="hr">◄ CASINO</button>
+      <div class="game-title">EL HIPÓDROMO NOCTURNO <small class="pay-tag">A ganador</small></div>
+      <div class="game-info"><span id="hr-cap"></span> <span class="mult-badge" id="hr-mult">×1.00</span></div>
+    </div>
+    <div class="game-stage hr-stage">
+      <aside class="hr-left">
+        <div class="hr-board deco-frame">
+          <h4 class="side-title">PIZARRA</h4>
+          <div class="hr-runners" id="hr-runners"></div>
+          <div class="hr-betline">
+            <div class="hr-chip-row" id="hr-chips"></div>
+            <div class="hr-bet-info">APUESTA: <b id="hr-bet-amt">10</b> → <b id="hr-bet-horse">—</b></div>
+            <button type="button" class="btn btn-gold btn-deco btn-big" id="hr-run">¡A CORRER!</button>
+          </div>
+        </div>
+        <div class="trick-panel" id="hr-tricks"></div>
+      </aside>
+      <div class="hr-trackbox deco-frame">
+        <div class="hr-track" id="hr-track"></div>
+        <div class="hr-narr" id="hr-narr"></div>
+        <div class="hr-msg" id="hr-msg"></div>
+        <div class="hr-photo" id="hr-photo" aria-hidden="true"><span>¡FOTO FINAL!</span></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ HABITACIÓN TRASERA ============ -->
   <section class="screen" id="screen-backroom">
     <div class="br-room">
@@ -271,6 +304,7 @@
       <div class="hud-mode">
         <span class="hud-mode-label" id="hud-mode-label">HISTORIA</span>
         <div class="debt-bar" id="hud-debt"><i id="hud-debt-fill"></i><em id="hud-debt-label"></em></div>
+        <div class="hud-streak" id="hud-streak" hidden data-tip="Racha caliente: cada victoria consecutiva suma +5% de pago (máx. +50%). Se rompe al perder."><span class="hs-ico" data-ico="streak"></span><b id="hud-streak-n"></b><em id="hud-streak-pct"></em></div>
       </div>
     </div>
     <div class="hud-sus" data-tip="Sube al usar trucos. Baja con rondas limpias y tragos. Al 100%: Habitación Trasera.">
@@ -393,18 +427,47 @@
   </div>
 </div>
 
-<script src="js/utils.js?v=7"></script>
-<script src="js/icons.js?v=7"></script>
-<script src="js/audio.js?v=7"></script>
-<script src="js/fx.js?v=7"></script>
-<script src="js/data.js?v=7"></script>
-<script src="js/state.js?v=7"></script>
-<script src="js/ui.js?v=7"></script>
-<script src="js/hub.js?v=7"></script>
-<script src="js/shops.js?v=7"></script>
-<script src="js/blackjack.js?v=7"></script>
-<script src="js/roulette.js?v=7"></script>
-<script src="js/slots.js?v=7"></script>
-<script src="js/main.js?v=7"></script>
+<!-- ============ MODAL: EVENTO NOCTURNO ============ -->
+<div class="modal" id="modal-event">
+  <div class="modal-panel deco-frame modal-event">
+    <button type="button" class="modal-x" data-close="modal-event" aria-label="Cerrar"><span data-ico="x"></span></button>
+    <div class="ev-head">
+      <div class="ev-ico" id="ev-ico"></div>
+      <div class="ev-headtext">
+        <span class="ev-kicker">ESA NOCHE EN EL CASINO</span>
+        <h2 id="ev-title">—</h2>
+      </div>
+    </div>
+    <p class="ev-text" id="ev-text"></p>
+    <div class="ev-choices" id="ev-choices"></div>
+  </div>
+</div>
+
+<!-- ============ ESCENA: FAMILIA MORETTI ============ -->
+<div id="moretti-overlay" aria-hidden="true">
+  <div class="mo-frame">
+    <div class="mo-ico" id="mo-ico"></div>
+    <div class="mo-kicker" id="mo-kicker"></div>
+    <h2 class="mo-title" id="mo-title"></h2>
+    <p class="mo-text" id="mo-text"></p>
+    <button type="button" class="btn btn-gold btn-deco" id="mo-btn">SEGUIR JUGANDO</button>
+  </div>
+</div>
+
+<script src="js/utils.js?v=8"></script>
+<script src="js/icons.js?v=8"></script>
+<script src="js/audio.js?v=8"></script>
+<script src="js/fx.js?v=8"></script>
+<script src="js/data.js?v=8"></script>
+<script src="js/state.js?v=8"></script>
+<script src="js/ui.js?v=8"></script>
+<script src="js/hub.js?v=8"></script>
+<script src="js/shops.js?v=8"></script>
+<script src="js/events.js?v=8"></script>
+<script src="js/blackjack.js?v=8"></script>
+<script src="js/roulette.js?v=8"></script>
+<script src="js/slots.js?v=8"></script>
+<script src="js/races.js?v=8"></script>
+<script src="js/main.js?v=8"></script>
 </body>
 </html>

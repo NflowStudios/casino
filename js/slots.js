@@ -145,7 +145,7 @@ const SL = {
 
     // determinar paradas objetivo (con asistencia de suerte)
     const targets = this.pos.map(() => U.randInt(0, 19));
-    const luck = State.hasAmulet('pata') ? 0.05 : 0;
+    const luck = State.luckBonus();
     if (luck) {
       // probar si un ±1 en algún carrete crea premio
       const symsNow = targets.map((t, i) => this.strips[i][(t + 1) % this.LEN]);
@@ -222,9 +222,12 @@ const SL = {
         State.saveMeta();
         U.toast('¡JACKPOT! Los Sietes de Oro llueven sobre el Gran Salón.', 'gold', 5500);
       } else Sound.sfx.win(res.m >= 15);
+      State.bumpStreak();
     } else {
       this.setMsg('Nada. El metal frío no perdona.');
       Sound.sfx.lose();
+      State.breakStreak();
+      State.mendigoRefund(this.bet);
     }
     State.markRound(!this.usedTrickThisSpin);
     this.usedTrickThisSpin = false;

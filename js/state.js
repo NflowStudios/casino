@@ -15,8 +15,8 @@ const State = {
       victories: 0,
       stats: {
         runs: 0, deaths: 0, bjHands: 0, slotSpins: 0, rlSpins: 0, wins: 0,
-        biggestWin: 0, bestRLWin: 0, backrooms: 0, luckWins: 0, crisisCount: 0,
-        synergies: 0, jackpots: 0, tierEver: 0, tricksBestRun: 0, peakEver: 0
+        biggestWin: 0, bestRLWin: 0, bestHRWin: 0, backrooms: 0, luckWins: 0, crisisCount: 0,
+        synergies: 0, jackpots: 0, tierEver: 0, tricksBestRun: 0, peakEver: 0, hrBestRun: 0
       }
     };
   },
@@ -72,7 +72,10 @@ const State = {
       crisisOn: false,
       debtReadyToasted: false,
       victory: false,
-      stats: { hands: 0, tricksUsed: 0, biggestWin: 0, peak: DATA.START_CHIPS },
+      // v1.4: racha caliente, suerte temporal, eventos nocturnos y escenas Moretti
+      streak: 0, luckRounds: 0, luckPower: 0,
+      roundsSinceEvent: 0, morettiQueue: [], morettiSeen: [], hrStreak: 0,
+      stats: { hands: 0, tricksUsed: 0, biggestWin: 0, peak: DATA.START_CHIPS, hrWins: 0, bestStreak: 0 },
       unlocksThisRun: []
     };
     this.meta.stats.runs++;
@@ -91,6 +94,18 @@ const State = {
       const r = JSON.parse(raw);
       if (!r || typeof r.chips !== 'number' || r.chips < 10) { this.clearRun(); return null; }
       this.run = r;
+      // migración suave de partidas guardadas con versiones anteriores
+      if (r.streak === undefined) r.streak = 0;
+      if (!r.luckRounds) r.luckRounds = 0;
+      if (!r.luckPower) r.luckPower = 0;
+      if (r.roundsSinceEvent === undefined) r.roundsSinceEvent = 0;
+      if (!Array.isArray(r.morettiQueue)) r.morettiQueue = [];
+      if (!Array.isArray(r.morettiSeen)) r.morettiSeen = [];
+      if (r.hrStreak === undefined) r.hrStreak = 0;
+      if (r.stats) {
+        if (r.stats.hrWins === undefined) r.stats.hrWins = 0;
+        if (r.stats.bestStreak === undefined) r.stats.bestStreak = 0;
+      }
       return r;
     } catch (e) { return null; }
   },
@@ -120,7 +135,20 @@ const State = {
       Sound.sfx.flash();
       Hub.refreshServices();
     }
+    this.checkMoretti();
     if (opts && opts.silent !== true) this.saveRun();
+  },
+
+  /* ---------- escenas Moretti: cruces de umbral (modo historia) ---------- */
+  checkMoretti() {
+    const r = this.run;
+    if (!r || r.mode !== 'story' || !DATA.MORETTI) return;
+    for (let i = 0; i < DATA.MORETTI.length; i++) {
+      if (r.chips >= DATA.MORETTI[i].at && r.morettiSeen.indexOf(i) < 0) {
+        r.morettiSeen.push(i);
+        r.morettiQueue.push(i);
+      }
+    }
   },
   canAfford(n) { return this.run && this.run.chips >= n; },
   tierCap() { return DATA.TIERS[this.run ? this.run.tier : 0].cap; },
@@ -231,10 +259,38 @@ const State = {
     let changed = false;
     r.drinks = r.drinks.filter((d) => {
       d.roundsLeft--;
-      if (d.roundsLeft <= 0) { changed = true; U.toast('El ' + DATA.itemName(d.id) + ' se agota.', 'info', 2500); return false; }
+      if (d.roundsLeft <= 0) {
+        changed = true;
+        U.toast('El ' + (d.name || DATA.itemName(d.id)) + ' se agota.', 'info', 2500);
+        return false;
+      }
       return true;
     });
     if (changed || r.drinks.length) UI.renderInventory();
+  },
+  /* buff de pago temporal (eventos nocturnos y dados mellados) */
+  addPayoutBuff(name, games, mult, rounds) {
+    const r = this.run;
+    if (!r) return;
+    const ex = r.drinks.find((d) => d.name === name);
+    if (ex) ex.roundsLeft += rounds;
+    else r.drinks.push({ id: 'buff_' + name.replace(/\s+/g, ''), name, roundsLeft: rounds, mult, games, type: 'payout' });
+    UI.renderInventory();
+    this.saveRun();
+  },
+  /* suerte temporal (cantante, eventos) */
+  addLuck(power, rounds) {
+    const r = this.run;
+    if (!r) return;
+    r.luckPower = Math.max(r.luckPower || 0, power);
+    r.luckRounds = Math.max(r.luckRounds || 0, rounds);
+    UI.renderInventory();
+    this.saveRun();
+  },
+  luckBonus() {
+    const r = this.run;
+    if (!r) return 0;
+    return (this.hasAmulet('pata') ? 0.05 : 0) + (r.luckRounds > 0 ? (r.luckPower || 0.05) : 0);
   },
   payoutMult(game) {
     let m = 1;
@@ -243,7 +299,45 @@ const State = {
     }
     if (this.synActive('horadorada')) m *= 1.30;
     if (game === 'blackjack' && this.synActive('coctelsuerte')) m *= 1.10;
+    m *= this.streakMult();
     return Math.round(m * 100) / 100;
+  },
+
+  /* ---------- racha caliente ---------- */
+  streakMult() {
+    const r = this.run;
+    const n = r ? (r.streak || 0) : 0;
+    return 1 + Math.min(n, 10) * 0.05;
+  },
+  bumpStreak() {
+    const r = this.run;
+    if (!r) return;
+    r.streak = (r.streak || 0) + 1;
+    if (r.streak > (r.stats.bestStreak || 0)) r.stats.bestStreak = r.streak;
+    if (r.streak === 2) U.toast(Icon.svg('streak', 'toast-ico') + '¡Racha caliente! Cada victoria seguida suma +5% de pago (máx. +50%).', 'gold', 4200);
+    else if (r.streak >= 3 && r.streak % 5 === 0) U.toast(Icon.svg('streak', 'toast-ico') + 'La mesa arde: racha ×' + r.streak + ' — +' + Math.min(r.streak, 10) * 5 + '% de pago.', 'gold', 4000);
+    UI.renderHUD();
+  },
+  breakStreak() {
+    const r = this.run;
+    if (!r) return;
+    const had = r.streak || 0;
+    r.streak = 0;
+    if (had >= 4) U.toast('Tu racha de ' + had + ' victorias se enfría.', 'danger', 3200);
+    UI.renderHUD();
+  },
+
+  /* ---------- Moneda del Mendigo ---------- */
+  mendigoRefund(loss) {
+    const r = this.run;
+    if (!r || !this.hasAmulet('moneda') || !loss || loss <= 300) return false;
+    r.amulets.splice(r.amulets.indexOf('moneda'), 1);
+    const refund = Math.round(loss / 2);
+    this.addChips(refund);
+    U.toast(Icon.svg('moneda', 'toast-ico') + 'La Moneda del Mendigo brilla: recuperas ' + U.fmt(refund) + ' fichas de tu pérdida. El amuleto se consume.', 'gold', 5200);
+    Sound.sfx.coin();
+    UI.renderInventory();
+    return true;
   },
 
   /* ---------- amuletos / trucos ---------- */
@@ -305,6 +399,11 @@ const State = {
     this.meta.stats.wins++;
     if (amount > this.meta.stats.biggestWin) this.meta.stats.biggestWin = amount;
     if (game === 'roulette' && amount > this.meta.stats.bestRLWin) this.meta.stats.bestRLWin = amount;
+    if (game === 'races') {
+      if (amount > this.meta.stats.bestHRWin) this.meta.stats.bestHRWin = amount;
+      r.stats.hrWins = (r.stats.hrWins || 0) + 1;
+      if (r.stats.hrWins > this.meta.stats.hrBestRun) this.meta.stats.hrBestRun = r.stats.hrWins;
+    }
     this.saveMeta();
   },
   recordSpin(game) {
@@ -321,6 +420,15 @@ const State = {
     const r = this.run;
     if (!r) return 'ok';
     this.tickDrinks();
+    if (r.luckRounds > 0) {
+      r.luckRounds--;
+      if (r.luckRounds === 0) {
+        r.luckPower = 0;
+        U.toast('El hechizo de la suerte se desvanece.', 'info', 2600);
+        UI.renderInventory();
+      }
+    }
+    r.roundsSinceEvent = (r.roundsSinceEvent || 0) + 1;
     this.checkUnlocks();
     // Corpse Reviver: quiebra pero con seguro
     if (r.chips <= 0) {

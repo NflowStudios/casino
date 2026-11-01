@@ -201,7 +201,7 @@ const Backroom = {
       setTimeout(() => Sound.sfx.coinFlip(), 700);
       setTimeout(() => Sound.sfx.coinFlip(), 1400);
       await U.sleep(2400);
-      let p = 0.5 + (State.hasAmulet('pata') ? 0.05 : 0);
+      let p = 0.5 + State.luckBonus();
       p = U.clamp(p, 0.05, 0.95);
       const win = U.chance(p);
       coin.hidden = true;

@@ -154,6 +154,69 @@ const Icon = {
       <path d="M7.5 12.8H16.5"/>
       <path d="M4.6 14.9C8 16.9 16 16.9 19.4 14.9C16.2 18.9 7.8 18.9 4.6 14.9Z"/>`,
 
+    /* ---------- KIT DE BARRIO + HIPÓDROMO ---------- */
+    tragocasa: /* vaso de la casa sin etiqueta + destello */ `
+      <path d="M7.5 6H16.5L15.6 18.9A1.8 1.8 0 0 1 13.8 20.6H10.2A1.8 1.8 0 0 1 8.4 18.9Z"/>
+      <path d="M7.8 10H16.2"/>
+      <circle cx="10.8" cy="13.4" r=".75" fill="currentColor" stroke="none"/>
+      <circle cx="13.4" cy="15.7" r=".75" fill="currentColor" stroke="none"/>
+      <circle cx="11.4" cy="17.4" r=".75" fill="currentColor" stroke="none"/>
+      <path d="M18.7 2.6l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6Z" fill="currentColor" stroke="none"/>`,
+
+    dadosmellados: /* dado agrietado con mella */ `
+      <rect x="5" y="5" width="14" height="14" rx="2.6"/>
+      <path d="M14.2 5L15.9 6.7L14.7 8.3" stroke-width="1.2"/>
+      <circle cx="9" cy="9" r="1" fill="currentColor" stroke="none"/>
+      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>
+      <circle cx="15" cy="15" r="1" fill="currentColor" stroke="none"/>
+      <circle cx="9" cy="15" r="1" fill="currentColor" stroke="none"/>`,
+
+    moneda: /* moneda agujereada del mendigo */ `
+      <circle cx="12" cy="12" r="7.4"/>
+      <circle cx="12" cy="12" r="5.8" stroke-dasharray="1.6 1.7" stroke-width="1"/>
+      <circle cx="12" cy="12" r="2.7"/>
+      <path d="M6.3 9.1L4.8 8.3M17.7 9.1L19.2 8.3" stroke-width="1"/>`,
+
+    doping: /* vial de "vitaminas" del establo */ `
+      <path d="M10.2 3.4h3.6V6.2"/>
+      <path d="M9.4 6.2h5.2v11.2A2.6 2.6 0 0 1 12 20a2.6 2.6 0 0 1-2.6-2.6Z"/>
+      <path d="M9.4 12.2h5.2" stroke-width="1.2"/>
+      <circle cx="11" cy="15.1" r=".7" fill="currentColor" stroke="none"/>
+      <circle cx="13.3" cy="16.8" r=".7" fill="currentColor" stroke="none"/>
+      <path d="M15.8 4.4l1.6-1.6M16.6 6.6h2.2" stroke-width="1"/>`,
+
+    consejo: /* gorra de jockey con visera */ `
+      <path d="M7.2 13.8C7.2 9.8 9.3 7.4 12 7.4s4.8 2.4 4.8 6.4"/>
+      <path d="M6.4 13.8h11.2"/>
+      <path d="M17.6 13.8c1.9.2 3.1.8 3.5 1.9-1.7.5-3.6.2-4.9-.5"/>
+      <path d="M9.6 9.2L12 10.6l2.4-1.4" stroke-width="1"/>
+      <circle cx="12" cy="6.6" r=".9"/>`,
+
+    lacre: /* sobre con sello de lacre */ `
+      <rect x="4.5" y="6.2" width="15" height="11.4" rx="1.4"/>
+      <path d="M5.2 7.2L12 12.6l6.8-5.4"/>
+      <circle cx="12" cy="15.6" r="1.8"/>
+      <path d="M12 14.6v2" stroke-width="1"/>`,
+
+    table: /* mesa de paño con patas */ `
+      <path d="M4.4 8.2C4.4 6 7.8 4.4 12 4.4s7.6 1.6 7.6 3.8-3.4 3.8-7.6 3.8S4.4 10.4 4.4 8.2Z"/>
+      <path d="M6.4 11.8V19.6M17.6 11.8V19.6"/>
+      <path d="M6.4 16.4h11.2" stroke-width="1"/>`,
+
+    badge: /* placa policial */ `
+      <path d="M12 3.2l2.2 4.7 5.1.6-3.8 3.5 1 5.1L12 14.6l-4.5 2.5 1-5.1-3.8-3.5 5.1-.6Z"/>
+      <circle cx="12" cy="11" r="1.1" fill="currentColor" stroke="none"/>`,
+
+    fajo: /* fajo de billetes atado */ `
+      <ellipse cx="12" cy="6.6" rx="5.6" ry="2.4"/>
+      <path d="M6.4 6.6v11.2c0 1.4 2.5 2.6 5.6 2.6s5.6-1.2 5.6-2.6V6.6"/>
+      <path d="M6.4 12c0 1.4 2.5 2.6 5.6 2.6s5.6-1.2 5.6-2.6"/>
+      <path d="M6.4 12v5.8c0 1.4 2.5 2.6 5.6 2.6s5.6-1.2 5.6-2.6V12" stroke-width="1"/>`,
+
+    streak: /* llama déco de la racha */ `
+      <path d="M12 3.2C13.2 6 10.4 7.5 9.3 9.4c-.9 1.6-1.4 2.8-1.4 4.3a4.1 4.1 0 0 0 4.1 4.1 4.1 4.1 0 0 0 4.1-4.1c0-1.9-.9-3.4-1.8-4.8"/>
+      <path d="M12 17.8c-1.5-.6-2.3-1.8-2.1-3.4 1.4.4 2.3-.5 2.1-2.3 1.6 1.2 2.4 2.5 2.4 4" stroke-width="1.1"/>`,
+
     /* ---------- SERVICIOS / UI ---------- */
     martini: /* botella y copa — LA BARRA */ `
       <path d="M7.5 4H9.5V8.8C9.5 9.8 8.7 10.2 8.7 11.2V18.4A1.6 1.6 0 0 0 10.3 20H7.1A1.6 1.6 0 0 0 8.7 18.4V11.2C8.7 10.2 7.5 9.8 7.5 8.8Z"/>
@@ -266,6 +329,26 @@ const Icon = {
       <path d="M60 8L66 20L60 17L54 20Z" fill="#F4D06F" stroke="none"/>
       <path d="M46 128C46 112 74 112 74 128" stroke-width="2"/>
       <path d="M40 128H80M44 128V134M76 128V134" stroke-width="2"/>`,
+
+    hr: /* herradura del hipódromo nocturno */ `
+      <g stroke-width="7">
+        <path d="M40 108V70C40 48 48 36 60 36C72 36 80 48 80 70V108"/>
+      </g>
+      <g stroke-width="2">
+        <path d="M60 52l3.2 8.8L72 64l-8.8 3.2L60 76l-3.2-8.8L48 64l8.8-3.2Z" fill="rgba(244,208,111,.14)"/>
+      </g>
+      <g fill="currentColor" stroke="none" opacity=".9">
+        <circle cx="40" cy="86" r="1.7"/><circle cx="40" cy="100" r="1.7"/>
+        <circle cx="80" cy="86" r="1.7"/><circle cx="80" cy="100" r="1.7"/>
+        <circle cx="49.5" cy="52" r="1.7"/><circle cx="70.5" cy="52" r="1.7"/>
+      </g>
+      <g stroke-width="1.6" opacity=".35">
+        <path d="M20 42L36 26M100 42L84 26M60 14V26"/>
+      </g>
+      <g stroke-width="2">
+        <path d="M24 122H96M30 122V133M90 122V133"/>
+        <path d="M52 122V96M68 122V96" stroke-width="1.6" opacity=".7"/>
+      </g>`,
 
     sl: /* gabinete con carretes + palanca + ficha */ `
       <path d="M30 42C40 22 80 22 90 42" stroke-width="2.2"/>

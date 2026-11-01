@@ -6,6 +6,10 @@ const Hub = {
     this.applyTier();
     this.refreshServices();
     UI.renderHUD();
+    // prioridad cinematográfica: escenas Moretti en cola → luego, eventos nocturnos
+    const r = State.run;
+    if (r && r.morettiQueue && r.morettiQueue.length) { Moretti.playNext(); return; }
+    Events.maybe();
   },
   applyTier() {
     const r = State.run;

@@ -57,6 +57,7 @@ const App = {
     U.on(U.$('door-bj'), 'click', () => BJ.enter());
     U.on(U.$('door-rl'), 'click', () => RL.enter());
     U.on(U.$('door-sl'), 'click', () => SL.enter());
+    U.on(U.$('door-hr'), 'click', () => HR.enter());
     U.on(U.$('btn-bar'), 'click', () => Bar.open());
     U.on(U.$('btn-market'), 'click', () => Market.open());
     U.on(U.$('btn-phone'), 'click', () => Hub.phoneAction());
@@ -68,6 +69,7 @@ const App = {
       if (g === 'bj') BJ.leave();
       if (g === 'rl') RL.leave();
       if (g === 'sl') SL.leave();
+      if (g === 'hr') HR.leave();
     }));
 
     // sonido / menú
@@ -137,6 +139,8 @@ const App = {
       '<li><span>Pico de riqueza</span><b>' + U.fmt(r.stats.peak) + '</b></li>' +
       '<li><span>Deuda pendiente</span><b class="neg">' + (r.mode === 'story' ? U.fmt(r.debt) : '—') + '</b></li>' +
       '<li><span>Manos jugadas</span><b>' + r.stats.hands + '</b></li>' +
+      '<li><span>Carreras ganadas</span><b>' + (r.stats.hrWins || 0) + '</b></li>' +
+      '<li><span>Mejor racha</span><b>×' + (r.stats.bestStreak || 0) + '</b></li>' +
       '<li><span>Trucos usados</span><b>' + r.stats.tricksUsed + '</b></li>' +
       '<li><span>Mayor victoria</span><b class="pos">' + U.fmt(r.stats.biggestWin) + '</b></li>';
     const lostItems = [];
@@ -162,6 +166,8 @@ const App = {
     U.$('v-stats').innerHTML =
       '<li><span>Pico de riqueza</span><b>' + U.fmt(r.stats.peak) + '</b></li>' +
       '<li><span>Manos jugadas</span><b>' + r.stats.hands + '</b></li>' +
+      '<li><span>Carreras ganadas</span><b>' + (r.stats.hrWins || 0) + '</b></li>' +
+      '<li><span>Mejor racha</span><b>×' + (r.stats.bestStreak || 0) + '</b></li>' +
       '<li><span>Trucos usados</span><b>' + r.stats.tricksUsed + '</b></li>' +
       '<li><span>Fichas restantes</span><b class="pos">' + U.fmt(r.chips) + '</b></li>' +
       '<li><span>Victorias totales</span><b>' + State.meta.victories + '</b></li>';
@@ -183,6 +189,12 @@ const App = {
       '<p><b>La Barra (Tragos):</b> mejoras temporales por rondas.</p>' +
       '<p><b>El Callejón (Mercado Negro):</b> trucos con cargas y amuletos pasivos por partida.</p>' +
       '<p>Ciertas combinaciones activan <b>Sinergias VIP</b> (ej.: Old Fashioned + Reloj de Oro = <span class="gold">Hora Dorada</span>).</p></section>' +
+      '<section class="help-sec"><h3>LA RACHA CALIENTE</h3>' +
+      '<p>Cada victoria consecutiva suma <b>+5% de pago</b> en todos los juegos, hasta <b>+50%</b>. Perder una ronda la enfría.</p>' +
+      '<p>La victoria que enciende la racha no cobra el bono: cobra la siguiente. Consérvala.</p></section>' +
+      '<section class="help-sec"><h3>ESA NOCHE EN EL CASINO</h3>' +
+      '<p>Al volver al piso, la noche puede sorprenderte: borrachos con sistemas infalibles, mesas calientes, redadas, prestamistas y cantantes que dedican canciones.</p>' +
+      '<p>En el modo Historia, la familia Moretti te irá poniendo ojo al cruzar cada umbral de riqueza.</p></section>' +
       '<section class="help-sec"><h3>CONTROLES</h3>' +
       '<p>Clic para todo. Botón derecho retira fichas de la ruleta.</p>' +
       '<p><b>M</b> silencia · <b>Esc</b> cierra ventanas.</p>' +
@@ -190,7 +202,8 @@ const App = {
       '<section class="help-sec wide"><h3>LAS MESAS</h3><div class="help-tables">' +
       '<div class="help-table"><h5>♦ BLACKJACK</h5><p>Pide, plántate, dobla o ríndete. Apuestas laterales: Pareja Perfecta y 21+3. Con <i>Cartas Marcadas</i> verás la carta oculta y el conteo real.</p></div>' +
       '<div class="help-table"><h5>♦ RULETA ART DÉCO</h5><p>Apuesta a <b>número pleno</b> (paga 35:1), al <b>color</b> o a <b>par/impar</b> (pagan 1:1). La <i>Sortija de la Croupier</i> cubre adyacentes. En los últimos giros, la cámara se acerca…</p></div>' +
-      '<div class="help-table"><h5>♦ TRAGAMONEDAS</h5><p>Elige tu ficha, tira de la palanca y alinea tres símbolos. <b>★ es el comodín:</b> sustituye a cualquier símbolo.</p></div>' +
+      '<div class="help-table"><h5>♦ TRAGAMONEDAS</h5><p>Elige tu ficha, tira de la palanca y alinea tres símbolos. <b>★ es el comodín:</b> sustituye a cualquier símbolo. <b>Dos símbolos iguales pagan ×2.</b></p></div>' +
+      '<div class="help-table"><h5>♦ HIPÓDROMO NOCTURNO</h5><p>Seis corredores, una recta, pago <b>a ganador</b> según la pizarra. La forma real de cada caballo es secreta… salvo que un jockey con deudas te la susurre. Ganar mucho seguido atrae la mirada del bookie.</p></div>' +
       '</div></section>' +
       '</div>';
   }

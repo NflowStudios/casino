@@ -89,7 +89,7 @@ const BJ = {
     c.appendChild(line);
 
     const sb = U.el('div', 'sidebets');
-    const t1 = U.el('button', 'sb-toggle' + (this.sidePP ? ' on' : ''), 'APUESTA LATERAL: PAREJA PERFECTA (25:1)');
+    const t1 = U.el('button', 'sb-toggle' + (this.sidePP ? ' on' : ''), 'APUESTA LATERAL: PAREJA PERFECTA (30:1)');
     t1.onclick = () => { this.sidePP = !this.sidePP; t1.classList.toggle('on', this.sidePP); Sound.sfx.chips(); };
     const t2 = U.el('button', 'sb-toggle' + (this.side213 ? ' on' : ''), 'APUESTA LATERAL: 21+3 (5:1 a 100:1)');
     t2.onclick = () => { this.side213 = !this.side213; t2.classList.toggle('on', this.side213); Sound.sfx.chips(); };
@@ -217,7 +217,7 @@ const BJ = {
     const mult = State.payoutMult('blackjack');
     const [c1, c2] = this.p;
     if (this.sidePP && c1.r === c2.r && c1.s === c2.s) {
-      const win = Math.round(Math.ceil(this.bet / 2) * 25 * mult);
+      const win = Math.round(Math.ceil(this.bet / 2) * 30 * mult);
       State.addChips(win);
       State.recordWin(win, 'blackjack');
       U.toast('Pareja Perfecta: +' + U.fmt(win), 'success');
@@ -354,9 +354,10 @@ const BJ = {
     else if (result === 'push') { delta = stake; }
     else if (result === 'surrender') { delta = Math.round(stake / 2); }
 
+    const isWin = result === 'win' || result === 'blackjack' || result === 'charlie';
     if (delta > 0) {
       State.addChips(delta);
-      State.recordWin(delta, 'blackjack');
+      if (isWin) State.recordWin(delta, 'blackjack');
       if (result !== 'push') {
         FX.winAt(U.$('bj-hand'), delta >= this.bet * 3);
         Sound.sfx.win(delta >= this.bet * 3);
@@ -364,7 +365,14 @@ const BJ = {
     } else {
       Sound.sfx.lose();
       m.classList.add('bad');
+      if (result === 'lose') {
+        State.breakStreak();
+        State.mendigoRefund(stake);
+      } else if (result === 'surrender') {
+        State.breakStreak();
+      }
     }
+    if (isWin) State.bumpStreak();
     m.textContent = msg + (delta > 0 ? ' +' + U.fmt(delta) : '');
 
     State.markRound(this.clean);

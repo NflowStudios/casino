@@ -47,6 +47,17 @@ const UI = {
     U.$('sus-num').textContent = r.sus + '%';
     document.body.classList.toggle('sus-mid', r.sus >= 34 && r.sus < 67);
     document.body.classList.toggle('sus-hot', r.sus >= 67);
+    // racha caliente
+    const stEl = U.$('hud-streak');
+    if (stEl) {
+      const n = r.streak || 0;
+      if (n >= 2) {
+        stEl.hidden = false;
+        U.$('hud-streak-n').textContent = 'RACHA ×' + n;
+        U.$('hud-streak-pct').textContent = '+' + Math.min(n, 10) * 5 + '%';
+        stEl.classList.toggle('hot', n >= 5);
+      } else stEl.hidden = true;
+    }
     this.updatePitBoss();
     this.renderInventory();
   },
@@ -102,8 +113,13 @@ const UI = {
       box.appendChild(p);
     };
     for (const d of r.drinks) {
-      const def = DATA.DRINKS.find((x) => x.id === d.id);
-      add('p-drink', def.name.toUpperCase() + ' <b>' + d.roundsLeft + '</b>', def.desc);
+      const def = DATA.itemById(d.id);
+      const nm = def ? def.name.toUpperCase() : (d.name || d.id).toUpperCase();
+      add('p-drink', nm + ' <b>' + d.roundsLeft + '</b>', def ? def.desc : 'Efecto temporal: el pago mejora mientras dure.');
+    }
+    if (r.luckRounds > 0) {
+      add('p-luck', 'SUERTE +' + Math.round((r.luckPower || 0.05) * 100) + '% <b>' + r.luckRounds + '</b>',
+        'La fortuna te sonríe en la ruleta, los carretes y los volados.');
     }
     for (const t of r.tricks) {
       if (t.charges <= 0) continue;
