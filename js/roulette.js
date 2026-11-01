@@ -90,12 +90,13 @@ const RL = {
     if (this.rotor) this.rotor.setAttribute('transform', 'rotate(' + deg + ' 160 160)');
   },
   placeBall(betaDeg, radius, settle) {
+    /* Coordenadas en % del wheelbox (rueda fluida): la rueda lógica es 320×320 */
     const ball = U.$('rl-ball');
     const a = betaDeg * Math.PI / 180;
-    const x = 160 + radius * Math.sin(a) - 6.5;
-    const y = 160 - radius * Math.cos(a) - 6.5;
-    ball.style.left = x + 'px';
-    ball.style.top = y + 'px';
+    const x = (160 + radius * Math.sin(a)) / 320 * 100;
+    const y = (160 - radius * Math.cos(a)) / 320 * 100;
+    ball.style.left = x + '%';
+    ball.style.top = y + '%';
     ball.classList.toggle('settled', !!settle);
   },
 
