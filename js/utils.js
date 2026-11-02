@@ -52,7 +52,7 @@ const U = {
     /* En las mesas de juego el toast va centrado sobre el tablero:
        una sola ranura para que nunca se apile sobre el paño */
     const scr = document.body.dataset.screen || '';
-    if (scr === 'blackjack' || scr === 'roulette' || scr === 'slots') {
+    if (scr === 'blackjack' || scr === 'roulette' || scr === 'slots' || scr === 'races' || scr === 'duel') {
       while (box.firstChild) box.firstChild.remove();
     }
     const t = U.el('div', 'toast t-' + (type || 'info'), msg);

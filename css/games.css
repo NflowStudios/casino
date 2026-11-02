@@ -267,3 +267,9 @@
   .duel-say{font-size:var(--fs-2)}
   .duel-felt{min-height:420px}
 }
+
+/* v1.6 — indicador pasivo de APOSTAR A DESTIEMPO (se ofrece tras el giro) */
+.trick-btn.tb-hint{background:rgba(212,175,55,.07);border:1px dashed rgba(212,175,55,.5);opacity:.75;cursor:help}
+.trick-btn.tb-hint .tb-name{color:#e8d9a8;font-size:calc(var(--fs-3) * .92)}
+.trick-btn.tb-hint .tb-charges{color:#cbb56a}
+.trick-btn.tb-hint:hover{border-color:rgba(212,175,55,.7);background:rgba(212,175,55,.1);box-shadow:none}

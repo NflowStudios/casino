@@ -109,7 +109,7 @@ const Duel = {
   betFor() {
     const d = State.run.duel;
     if (d.hand <= DATA.DUEL.STAKES.length) return Math.max(DATA.MIN_BET, Math.round(d.stack * DATA.DUEL.STAKES[d.hand - 1]));
-    return d.stack; // TODO: el paño ya incluye el bolsillo
+    return d.stack; // mano 5+: el paño ya incluye el bolsillo
   },
 
   /* ---------- render base ---------- */

@@ -129,10 +129,12 @@ const UI = {
     for (const t of r.tricks) {
       if (t.charges <= 0) continue;
       const def = DATA.TRICKS.find((x) => x.id === t.id);
+      if (!def) continue;
       add('p-trick', def.name.toUpperCase() + ' <b>×' + t.charges + '</b>', def.desc);
     }
     for (const a of r.amulets) {
       const def = DATA.AMULETS.find((x) => x.id === a);
+      if (!def) continue;
       add('p-amulet', def.name.toUpperCase(), def.desc);
     }
     for (const s of DATA.SYNERGIES) {
@@ -161,6 +163,8 @@ const UI = {
     const vals = [10, 25, 50, 100, 250, 500, 1000, 5000];
     let sel = selected || 10;
     const cap = State.tierCap();
+    // si la ficha recordada excede el límite del tier actual (p. ej. bajaste de tier), vuelve a la base
+    if (sel > cap) sel = 10;
     const chips = vals.map((v) => {
       const b = U.el('button', 'chip' + (v === sel ? ' sel' : ''), U.fmt(v));
       b.dataset.v = v;

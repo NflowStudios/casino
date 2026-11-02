@@ -79,6 +79,7 @@ const State = {
       // v1.4: racha caliente, suerte temporal, eventos nocturnos y escenas Moretti
       streak: 0, luckRounds: 0, luckPower: 0,
       roundsSinceEvent: 0, morettiQueue: [], morettiSeen: [], hrStreak: 0,
+      markerRounds: 0, // rondas restantes de Cartas Marcadas (v1.6: en estado de run)
       duel: null,
       stats: { hands: 0, tricksUsed: 0, biggestWin: 0, peak: DATA.START_CHIPS, hrWins: 0, bestStreak: 0, backrooms: 0 },
       unlocksThisRun: []
@@ -107,6 +108,7 @@ const State = {
       if (!Array.isArray(r.morettiQueue)) r.morettiQueue = [];
       if (!Array.isArray(r.morettiSeen)) r.morettiSeen = [];
       if (r.hrStreak === undefined) r.hrStreak = 0;
+      if (r.markerRounds === undefined) r.markerRounds = 0;
       if (r.duel === undefined) r.duel = null;
       if (r.stats) {
         if (r.stats.hrWins === undefined) r.stats.hrWins = 0;

@@ -2,7 +2,7 @@
 'use strict';
 const RL = {
   bets: {}, hist: [], wheelAngle: 0, ballAngle: 0,
-  spinning: false, chipSel: null, armedDados: false, biasColor: null,
+  spinning: false, chipSel: null, chipVal: 10, armedDados: false, biasColor: null,
   usedTrickThisSpin: false, boardBuilt: false, rotor: null, placementHistory: [],
 
   enter() {
@@ -20,7 +20,7 @@ const RL = {
     this.renderTrickPanel();
     this.updateTotal();
     U.$('rl-result').innerHTML = '<span class="rl-res-ico">✦</span><span id="rl-res-num">—</span>';
-    this.chipSel = UI.chipRow(U.$('rl-chips'), null, this.chipSel ? undefined : 10);
+    this.chipSel = UI.chipRow(U.$('rl-chips'), (v) => { this.chipVal = v; }, this.chipVal);
     UI.renderMult('roulette', 'rl-mult');
     UI.show('roulette');
     this.placeBall(0, 126, true);
@@ -30,7 +30,7 @@ const RL = {
     const total = this.betTotal();
     if (this.spinning) return;
     if (total > 0) {
-      UI.confirm('ABANDONAR LA MESA', 'Tienes <b>' + U.fmt(total) + '</b> fichas sobre el tapete que perderás.<br>¿Te vas?', 'ABANDONAR').then((ok) => { if (ok) { this.bets = {}; Hub.enter(); } });
+      UI.confirm('ABANDONAR LA MESA', 'Tienes <b>' + U.fmt(total) + '</b> fichas sobre el tapete: vuelven a tu bolsillo al levantarte.<br>¿Volver al casino?', 'LEVANTARSE').then((ok) => { if (ok) { this.bets = {}; Hub.enter(); } });
     } else Hub.enter();
   },
 
@@ -374,6 +374,7 @@ const RL = {
     this.spinning = false;
     this.renderTrickPanel();
     this.updateTotal();
+    if (this.chipSel) this.chipSel.refresh(); // subiste de tier a mitad de sesión: habilita fichas mayores
     UI.renderMult('roulette', 'rl-mult');
     UI.renderHUD();
   },
@@ -385,9 +386,13 @@ const RL = {
       btn.style.cssText = 'width:100%;margin-top:.4rem';
       const dt = State.trick('destiempo');
       U.$('rl-tricks').appendChild(btn);
+      // que no pase desapercibido: la moneda canta y el botón entra en cuadro (móvil)
+      Sound.sfx.coinFlip();
+      setTimeout(() => Sound.sfx.coinFlip(), 160);
+      if (btn.scrollIntoView) { try { btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
       let done = false;
       const finish = (v) => { if (done) return; done = true; btn.remove(); clearTimeout(timer); res(v); };
-      const timer = setTimeout(() => finish(false), 2500);
+      const timer = setTimeout(() => finish(false), 4000);
       btn.onclick = () => {
         // mayor apuesta
         let bestKey = null, bestV = 0;
@@ -444,6 +449,18 @@ const RL = {
         this.renderTrickPanel();
       };
       panel.appendChild(b);
+    }
+    // APOSTAR A DESTIEMPO: no se activa aquí, sino cuando la bolita ya cayó.
+    // Indicador permanente para que sepas que lo llevas encima (bug v1.5: parecía que el truco no existía)
+    const dt = State.trick('destiempo');
+    if (dt && dt.charges > 0) {
+      const def = DATA.TRICKS.find((x) => x.id === 'destiempo');
+      const hint = U.el('button', 'trick-btn tb-hint',
+        '<span class="tb-name">◷ APOSTAR A DESTIEMPO — se ofrece tras el giro</span><span class="tb-charges">×' + dt.charges + '</span>');
+      hint.type = 'button';
+      hint.disabled = true;
+      hint.setAttribute('data-tip', def.desc + ' Cuando caiga la bolita tendrás 4 segundos para mover tu mayor apuesta al número ganador.');
+      panel.appendChild(hint);
     }
   }
 };

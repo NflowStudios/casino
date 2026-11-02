@@ -138,8 +138,11 @@ const App = {
     Sound.sfx.door();
     document.body.classList.remove('crisis');
     const st = U.$('go-stats'), lost = U.$('go-lost'), unl = U.$('go-unlocks');
+    U.$('go-flavor').textContent = soft
+      ? 'Apenas te quedan fichas para el autobús. La casa siempre gana… hasta la próxima.'
+      : 'Cero fichas. La casa siempre gana… hasta la próxima.';
     st.innerHTML =
-      '<li><span>Modo</span><b>' + (r.mode === 'story' ? 'Historia' : 'Infinito') + '</b></li>' +
+      '<li><span>Modo</span><b>' + (r.mode === 'story' ? 'Historia' : (r.mode === 'legend' ? 'Leyenda' : 'Infinito')) + '</b></li>' +
       '<li><span>Pico de riqueza</span><b>' + U.fmt(r.stats.peak) + '</b></li>' +
       '<li><span>Deuda pendiente</span><b class="neg">' + (r.mode === 'story' ? U.fmt(r.debt) : '—') + '</b></li>' +
       '<li><span>Manos jugadas</span><b>' + r.stats.hands + '</b></li>' +

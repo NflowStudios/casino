@@ -9,7 +9,7 @@ const ShopUI = {
     const el = U.el('article', 'item-card ' + state + (o.accent ? ' ' + o.accent : ''));
     let btn;
     if (o.locked) btn = { t: 'BLOQUEADO', on: false };
-    else if (o.owned) btn = { t: 'TUYO', on: false };
+    else if (o.owned) btn = { t: o.ownedLabel || 'TUYO', on: false };
     else if (!o.canBuy) btn = { t: 'SIN FONDOS', on: false };
     else btn = { t: o.cta || 'COMPRAR', on: true };
 
@@ -61,10 +61,13 @@ const Bar = {
       list.appendChild(ShopUI.card({
         icon: d.icon, name: d.name, meta, price: d.price,
         locked, canBuy, cta: 'PEDIR',
+        // el Corpse ya asegurado no está "sin fondos": está EN VIGOR (bug v1.5)
+        owned: insured, ownedLabel: 'EN VIGOR',
         desc: d.desc,
         hint: locked && DATA.UNLOCKS[d.unlock] ? DATA.UNLOCKS[d.unlock].hint : '',
         missing: d.price - (State.run ? State.run.chips : 0),
-        badge: active ? { cls: 'b-active', txt: 'ACTIVO · ' + active.roundsLeft + ' RONDAS' } : null,
+        badge: active ? { cls: 'b-active', txt: 'ACTIVO · ' + active.roundsLeft + ' RONDAS' }
+          : (insured ? { cls: 'b-active', txt: 'SEGURO ACTIVO' } : null),
         onBuy: () => this.buy(d)
       }));
     }

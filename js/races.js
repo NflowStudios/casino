@@ -347,6 +347,7 @@ const HR = {
     this.renderTrack();
     this.renderTrickPanel();
     this.refreshBet();
+    if (this.chipSel) this.chipSel.refresh(); // subiste de tier a mitad de sesión
     UI.renderMult('races', 'hr-mult');
     UI.renderHUD();
   }

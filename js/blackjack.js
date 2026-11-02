@@ -13,6 +13,9 @@ const BJ = {
     this.phase = 'bet';
     this.p = []; this.d = []; this.bet = 0; this.betChips = [];
     this.forcedAce = false; this.doubled = false;
+    // las rondas de Cartas Marcadas viven en el estado de la partida:
+    // sobreviven a recargas y NUNCA se filtran a la siguiente run (bug v1.5)
+    this.markerRounds = State.run ? (State.run.markerRounds || 0) : 0;
     U.$('bj-hand').innerHTML = '';
     U.$('bj-dealer-hand').innerHTML = '';
     U.$('bj-count').textContent = '';
@@ -120,7 +123,9 @@ const BJ = {
   addBet(v) {
     const cap = State.tierCap();
     if (this.bet + v > cap) { U.toast('Límite de apuesta del ' + DATA.TIERS[State.run.tier].name + ': ' + U.fmt(cap), 'danger'); return; }
-    if (!State.canAfford(this.bet + v + (this.sidePP ? Math.ceil((this.bet + v) / 2) : 0))) { U.toast('No te alcanza para tanto frenesí.', 'danger'); return; }
+    // el chequeo de fondos incluye AMBAS apuestas laterales activas (bug v1.5: solo contaba la Pareja Perfecta)
+    const sideCost = (this.sidePP ? Math.ceil((this.bet + v) / 2) : 0) + (this.side213 ? Math.ceil((this.bet + v) / 2) : 0);
+    if (!State.canAfford(this.bet + v + sideCost)) { U.toast('No te alcanza para tanto frenesí (apuesta + laterales).', 'danger'); return; }
     this.bet += v;
     this.betChips.push(v);
     this.refreshBetUI();
@@ -463,6 +468,7 @@ const BJ = {
       FX.flyChip(btn, U.$('bj-hand'), null, '');
     } else if (id === 'marcadas') {
       this.markerRounds = def.effect.rounds;
+      if (State.run) State.run.markerRounds = this.markerRounds; // persiste con la partida
       Sound.sfx.card();
       U.toast('Ves marcas invisibles: carta oculta del crupier y conteo real.', 'sus');
       const holeEl = U.$('bj-dealer-hand').children[1];
@@ -479,6 +485,7 @@ const BJ = {
   onRoundEnd() {
     if (this.markerRounds > 0) {
       this.markerRounds--;
+      if (State.run) State.run.markerRounds = this.markerRounds;
       const holeEl = U.$('bj-dealer-hand').children[1];
       if (holeEl && this.markerRounds === 0 && this.phase === 'settle') holeEl.classList.remove('marked');
       this.renderCountBox();

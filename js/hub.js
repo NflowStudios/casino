@@ -4,12 +4,16 @@ const Hub = {
   enter() {
     // un duelo a medias siempre manda: el don espera en la sala del fondo
     if (Duel.active()) { Duel.resume(); return; }
+    const r = State.run;
+    // guard anti-bloqueo (bug v1.5): volver al casino con menos del mínimo apostable
+    // (p. ej. tras LA LECCIÓN pagando la entrada con todo el bolsillo) dejaba la partida
+    // zombie: sin fichas para jugar y sin pantalla de derrota. La casa cobra y cierra el expediente.
+    if (r && r.chips < DATA.MIN_BET) { State.die(true); return; }
     UI.show('hub');
     this.applyTier();
     this.refreshServices();
     UI.renderHUD();
     // prioridad cinematográfica: escenas Moretti en cola → luego, eventos nocturnos
-    const r = State.run;
     if (r && r.morettiQueue && r.morettiQueue.length) { Moretti.playNext(); return; }
     Events.maybe();
   },

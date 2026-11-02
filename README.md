@@ -89,6 +89,18 @@ El sitio se sirve desde la rama `main`, carpeta raíz (`/`). Cualquier `git push
 
 ## Registro de cambios
 
+### v1.6.0 — La Noche se Repara (mantenimiento)
+Actualización dedicada a arreglos de bugs y fricciones reportadas jugando.
+
+- **Arreglo — Apostar a Destiempo (el reporte principal):** el truco era invisible hasta el instante exacto del giro y su ventana duraba 2.5 s — si parpadeabas, perdías la oferta sin saber que existía. Ahora: **indicador permanente** en el panel de trucos de la Ruleta («◷ se ofrece tras el giro ×N»), ventana ampliada a **4 segundos**, la moneda canta al abrirse y el botón entra solo en cuadro en móvil.
+- **Arreglo — la Ruleta olvidaba tu ficha:** salir de la mesa y volver reseteaba la ficha seleccionada a 10 (Slots y el Hipódromo sí la recordaban). Ahora se recuerda — y si tu ficha supera el límite del tier tras bajar de escenario, vuelve a la base.
+- **Arreglo — Cartas Marcadas se filtraba entre partidas:** las rondas de «ver la carta oculta» vivían en memoria del módulo y sobrevivían a la bancarrota: la partida siguiente arrancaba con conteo gratis. Ahora viven en el estado de la partida (también sobreviven a una recarga de página, que antes las perdía).
+- **Arreglo — soft-lock de la bancarrota zombi:** volver al casino con menos de 10 fichas (p. ej. perder LA LECCIÓN tras pagar la entrada con todo el bolsillo, o fracasar en la Habitación Trasera con casi nada) dejaba una partida sin muerte y sin juego posible. Ahora el Hub detecta el fondo y cierra el expediente con la pantalla de bancarrota (con texto propio: «Apenas te quedan fichas para el autobús»).
+- **Arreglo — Corpse Reviver ya asegurado** mostraba «SIN FONDOS» en la barra pese a tener dinero: ahora muestra **EN VIGOR** con insignia «SEGURO ACTIVO».
+- **Arreglo — apuestas laterales del Blackjack:** apilar fichas solo comprobaba la Pareja Perfecta; con la 21+3 activada podías armar una apuesta que el REPARTIR rechazaba después. El chequeo ahora incluye ambas laterales.
+- **Arreglo — fichas congeladas al ascender:** subir de tier a mitad de sesión no habilitaba las fichas mayores del selector hasta re-entrar a la mesa. Ahora el selector se refresca tras cada ronda.
+- **Menores:** el aviso al abandonar la Ruleta con apuestas ya no miente («vuelven a tu bolsillo», que es lo que pasa); el modo Leyenda aparece como tal en la pantalla de bancarrota (decía «Infinito»); toasts de una sola ranura también en el Hipódromo y la Sala del Fondo; blindaje del inventario contra definiciones faltantes.
+
 ### v1.5.0 — La Sala del Fondo
 - **La Partida Privada (duelo final):** al cruzar **1.75M** en el modo Historia, Moretti entrega la **Ficha Negra** y abre *La Sala del Fondo*: Blackjack **a 3 victorias** contra el don en persona, con entrada de 500k y **apuesta del orgullo** (10% → 15% → 20% → 25% del paño; la quinta mano se juega **a TODO O NADA**, paño y bolsillo). **El As de Moretti:** una vez por partida cambia su carta oculta a la vista de todos. Tus trucos funcionan en la sala… y deciden tu final.
 - **Cuatro finales:** **EL SOCIO** (ganar limpio y con la sospecha baja), **LA GRAN ESTAFA** (ganar con trucos o quemado — con sombras en el epílogo), **LA LECCIÓN** (perder; puedes volver a pagar la entrada) y **EL REY DE NADA** (arruinarte en el todo o nada). Epílogos con estadísticas de la partida y un guiño si conservas la *Moneda del Mendigo*. Ganar cierra el modo Historia.
