@@ -527,3 +527,38 @@ body.tier-2 .dust-dot{opacity:1}
 /* ---------- HUB: cuarta puerta ---------- */
 .tables{gap:clamp(.8rem,2.2vw,2.2rem)}
 .door{max-width:225px}
+
+/* ================= RACHA QUEMADA (la casa cuenta tus victorias) ================= */
+.hud-streak .hs-eye{display:none;width:15px;height:15px;color:#ff5a4e}
+.hud-streak .hs-eye .ico-svg{width:100%;height:100%}
+.hud-streak.burn{color:#ff7a5e;text-shadow:0 0 14px rgba(255,70,40,.9)}
+.hud-streak.burn .hs-ico,.hud-streak.burn b,.hud-streak.burn em{color:#ff7a5e}
+.hud-streak.burn em{color:#ffb3a0}
+.hud-streak.burn .hs-eye{display:inline-flex;animation:eyeWatch 2.6s ease-in-out infinite}
+@keyframes eyeWatch{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(1.18);opacity:.6}}
+
+/* ================= LA SALA DEL FONDO (servicio del hub) ================= */
+.svc-duel .svc-ico .ico-svg{color:#e8e0cc}
+.svc-duel{border-color:rgba(128,0,32,.55);background:rgba(20,4,10,.85)}
+.svc-duel:hover{border-color:var(--burgundy,#800020);box-shadow:0 0 22px rgba(128,0,32,.35)}
+.svc-duel.duel-ready{border-color:var(--gold);animation:phoneReady 1.2s ease-in-out infinite;box-shadow:0 0 22px rgba(212,175,55,.4)}
+.svc-duel .svc-t{color:#f0d9a8}
+
+/* ================= FINALES DE LA PARTIDA PRIVADA ================= */
+.e-wrap{position:relative;width:min(880px,94vw);max-height:90vh;overflow:auto;background:linear-gradient(180deg,var(--panel2),#0d0f15);padding:56px var(--sp-5) var(--sp-6);margin:auto;text-align:center}
+.e-wrap::before{content:"";position:absolute;inset:9px;border:1px solid rgba(212,175,55,.25);pointer-events:none}
+.e-chip{width:58px;height:58px;margin:0 auto 10px;display:grid;place-items:center;color:var(--gold-bright)}
+.e-chip .ico-svg{width:46px;height:46px;filter:drop-shadow(0 0 14px rgba(212,175,55,.4))}
+.e-kicker{display:block;font-family:var(--ft);letter-spacing:.4em;font-size:var(--fs-3);color:var(--cream-dim);margin-bottom:.6rem}
+.e-title{position:relative;font-family:var(--fd);color:var(--gold);letter-spacing:.2em;font-size:clamp(1.7rem,4.8vw,2.6rem);text-shadow:0 0 30px rgba(212,175,55,.5);padding-inline:clamp(46px,8vw,96px);margin-bottom:.8rem}
+.e-title .deco-flank{position:absolute;top:50%;left:0;margin:0;transform:translateY(-50%)}
+.e-title .deco-flank.r{left:auto;right:0}
+.e-flavor{font-family:var(--ft);color:var(--cream);margin:1rem auto 1.6rem;max-width:600px;line-height:1.75;font-size:var(--fs-5)}
+.e-note{color:var(--cream-dim);font-size:var(--fs-3)}
+/* variantes por final */
+.e-socio .e-title{color:var(--gold-bright)}
+.e-estafa .e-title{color:#e0708a;text-shadow:0 0 30px rgba(224,112,138,.45)}
+.e-estafa .e-chip .ico-svg{filter:drop-shadow(0 0 14px rgba(224,112,138,.5))}
+.e-rey .e-title{color:#e04a44;text-shadow:0 0 30px rgba(224,74,68,.5)}
+.e-rey .e-wrap,.e-rey{background:linear-gradient(180deg,#17090c,#0b0508)}
+.e-leccion .e-title{color:var(--cream)}

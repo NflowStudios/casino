@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Josefin+Sans:wght@300;400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=8">
-<link rel="stylesheet" href="css/games.css?v=8">
+<link rel="stylesheet" href="css/style.css?v=9">
+<link rel="stylesheet" href="css/games.css?v=9">
 </head>
 <body class="tier-0" data-screen="menu">
 <div id="game">
@@ -33,7 +33,7 @@
       <button type="button" class="btn btn-gold btn-deco" id="btn-new">NUEVA PARTIDA</button>
       <button type="button" class="btn btn-ghost btn-deco" id="btn-help">CÓMO JUGAR</button>
     </nav>
-    <footer class="menu-foot"><span id="menu-best"></span><span class="ver">v1.4.0</span></footer>
+    <footer class="menu-foot"><span id="menu-best"></span><span class="ver">v1.5.0</span></footer>
   </section>
 
   <!-- ============ SELECCIÓN DE MODO ============ -->
@@ -122,6 +122,9 @@
         </button>
         <button type="button" class="svc" id="btn-phone" data-tip="Una llamada a la familia Moretti.">
           <span class="svc-ico" data-ico="phone"></span><span class="svc-t">TELÉFONO</span><span class="svc-s" id="phone-note">Deuda</span>
+        </button>
+        <button type="button" class="svc svc-duel" id="btn-duel" hidden data-tip="La Ficha Negra te abre la sala del fondo: el duelo final contra don Salvatore Moretti.">
+          <span class="svc-ico" data-ico="chipnegra"></span><span class="svc-t">LA SALA DEL FONDO</span><span class="svc-s" id="duel-note">Partida Privada</span>
         </button>
       </div>
     </div>
@@ -252,6 +255,68 @@
     </div>
   </section>
 
+  <!-- ============ LA SALA DEL FONDO (PARTIDA PRIVADA) ============ -->
+  <section class="screen game-screen" id="screen-duel">
+    <div class="game-head">
+      <button type="button" class="btn btn-ghost btn-deco" id="duel-abandon">◄ LEVANTARSE</button>
+      <div class="game-title">LA SALA DEL FONDO <small class="pay-tag">A 3 victorias</small></div>
+      <div class="game-info"><span>Orgullo: 10→15→20→25% del paño · mano 5: TODO</span></div>
+    </div>
+    <div class="game-stage duel-stage">
+      <div class="duel-felt">
+        <div class="duel-scorebar">
+          <div class="duel-score" id="duel-score"></div>
+          <div class="duel-stakes" id="duel-stakes"></div>
+        </div>
+        <div class="duel-row duel-dealer-row">
+          <div class="duel-portrait" aria-hidden="true">
+            <svg viewBox="0 0 150 210" aria-hidden="true">
+              <defs>
+                <pattern id="duelpin" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#16121a"/><line x1="5" y1="0" x2="5" y2="10" stroke="#2a2033" stroke-width="3"/></pattern>
+              </defs>
+              <g class="duel-smoke">
+                <circle class="dks p1" cx="128" cy="90" r="4"/><circle class="dks p2" cx="134" cy="80" r="5"/><circle class="dks p3" cx="126" cy="70" r="3"/>
+              </g>
+              <path d="M16,210 L28,128 Q75,104 122,128 L134,210 Z" fill="url(#duelpin)" stroke="#08090d" stroke-width="2"/>
+              <path d="M44,210 L52,140 L62,134 L70,144 L78,134 L88,140 L94,210 Z" fill="#101218" opacity=".55"/>
+              <path d="M26,160 Q75,146 124,160 L124,172 Q75,158 26,172 Z" fill="#0b0c11"/>
+              <path d="M60,124 L75,170 L90,124 Q75,112 60,124 Z" fill="#e8e0cc"/>
+              <path d="M69,127 L75,162 L81,127 L78,125 L75,131 L72,125 Z" fill="#D4AF37"/>
+              <ellipse cx="75" cy="98" rx="18" ry="20" fill="#151219"/>
+              <path d="M44,86 Q75,66 106,86 L102,82 Q75,64 48,82 Z" fill="#08090d"/>
+              <path d="M50,84 L54,58 Q75,44 96,58 L100,84 Q75,70 50,84 Z" fill="#12101a"/>
+              <line x1="51" y1="82" x2="99" y2="78" stroke="#D4AF37" stroke-width="3" opacity=".9"/>
+              <path d="M59,96 Q67,91 75,96 M75,96 Q83,91 91,96" stroke="#D4AF37" stroke-width="2" fill="none" class="duel-eyes"/>
+              <path d="M63,112 Q75,117 87,112" stroke="#5a0016" stroke-width="2.5" fill="none"/>
+              <rect x="94" y="106" width="19" height="4.5" rx="1.6" fill="#3a2b18" transform="rotate(10 103 108)"/>
+              <circle class="duel-ember" cx="114" cy="102" r="2.4"/>
+            </svg>
+          </div>
+          <div class="duel-handbox">
+            <div class="hand-label">DON SALVATORE MORETTI <span class="count-badge" id="duel-mcount"></span><span class="duel-asbadge" id="duel-as" data-tip="El As de Moretti: una vez por partida, el don puede cambiar su carta oculta a la vista de todos.">AS DE MORETTI</span></div>
+            <div class="hand" id="duel-mhand"></div>
+          </div>
+        </div>
+        <div class="duel-say" id="duel-say"></div>
+        <div class="duel-msg" id="duel-msg">La sala del fondo huele a cigarro y a decisiones definitivas.</div>
+        <div class="duel-row duel-player-row">
+          <div class="duel-handbox">
+            <div class="hand-label you">TÚ <span class="count-badge" id="duel-pcount"></span><span class="count-badge duel-countbox" id="duel-count" hidden data-tip="Cartas Marcadas: el conteo real del mazo de la sala."></span></div>
+            <div class="hand" id="duel-phand"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="game-side">
+        <div class="side-block">
+          <h4 class="side-title">TRUCOS DE BOLSILLO</h4>
+          <div id="duel-tricks" class="trick-panel"></div>
+          <div class="side-empty" id="duel-tricks-empty">Aquí también funcionan… si te atreves.</div>
+        </div>
+      </aside>
+    </div>
+    <div class="game-controls" id="duel-controls"></div>
+  </section>
+
   <!-- ============ HABITACIÓN TRASERA ============ -->
   <section class="screen" id="screen-backroom">
     <div class="br-room">
@@ -297,6 +362,22 @@
     </div>
   </section>
 
+  <!-- ============ FINALES DE LA PARTIDA PRIVADA ============ -->
+  <section class="screen" id="screen-ending">
+    <div class="e-wrap deco-frame" id="ending-wrap">
+      <div class="e-chip" aria-hidden="true"><span data-ico="chipnegra"></span></div>
+      <span class="e-kicker" id="e-kicker">EL FINAL DE LA NOCHE</span>
+      <h2 class="e-title"><i class="deco-flank" aria-hidden="true"></i><span id="e-title">—</span><i class="deco-flank r" aria-hidden="true"></i></h2>
+      <p class="e-flavor" id="e-flavor"></p>
+      <ul id="e-stats" class="stat-list v-stats"></ul>
+      <div class="go-btns">
+        <button type="button" class="btn btn-gold btn-deco" id="btn-e-back">VOLVER AL CASINO</button>
+        <button type="button" class="btn btn-gold btn-deco" id="btn-e-new">NUEVA PARTIDA</button>
+        <button type="button" class="btn btn-ghost btn-deco" id="btn-e-menu" data-nav="menu">MENÚ</button>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ HUD PERSISTENTE ============ -->
   <header id="hud">
     <div class="hud-left">
@@ -304,7 +385,7 @@
       <div class="hud-mode">
         <span class="hud-mode-label" id="hud-mode-label">HISTORIA</span>
         <div class="debt-bar" id="hud-debt"><i id="hud-debt-fill"></i><em id="hud-debt-label"></em></div>
-        <div class="hud-streak" id="hud-streak" hidden data-tip="Racha caliente: cada victoria consecutiva suma +5% de pago (máx. +50%). Se rompe al perder."><span class="hs-ico" data-ico="streak"></span><b id="hud-streak-n"></b><em id="hud-streak-pct"></em></div>
+        <div class="hud-streak" id="hud-streak" hidden data-tip="Racha caliente: cada victoria consecutiva suma +5% de pago (máx. +50%). Se rompe al perder."><span class="hs-ico" data-ico="streak"></span><span class="hs-eye" data-ico="eye" aria-hidden="true"></span><b id="hud-streak-n"></b><em id="hud-streak-pct"></em></div>
       </div>
     </div>
     <div class="hud-sus" data-tip="Sube al usar trucos. Baja con rondas limpias y tragos. Al 100%: Habitación Trasera.">
@@ -454,20 +535,21 @@
   </div>
 </div>
 
-<script src="js/utils.js?v=8"></script>
-<script src="js/icons.js?v=8"></script>
-<script src="js/audio.js?v=8"></script>
-<script src="js/fx.js?v=8"></script>
-<script src="js/data.js?v=8"></script>
-<script src="js/state.js?v=8"></script>
-<script src="js/ui.js?v=8"></script>
-<script src="js/hub.js?v=8"></script>
-<script src="js/shops.js?v=8"></script>
-<script src="js/events.js?v=8"></script>
-<script src="js/blackjack.js?v=8"></script>
-<script src="js/roulette.js?v=8"></script>
-<script src="js/slots.js?v=8"></script>
-<script src="js/races.js?v=8"></script>
-<script src="js/main.js?v=8"></script>
+<script src="js/utils.js?v=9"></script>
+<script src="js/icons.js?v=9"></script>
+<script src="js/audio.js?v=9"></script>
+<script src="js/fx.js?v=9"></script>
+<script src="js/data.js?v=9"></script>
+<script src="js/state.js?v=9"></script>
+<script src="js/ui.js?v=9"></script>
+<script src="js/hub.js?v=9"></script>
+<script src="js/shops.js?v=9"></script>
+<script src="js/events.js?v=9"></script>
+<script src="js/blackjack.js?v=9"></script>
+<script src="js/roulette.js?v=9"></script>
+<script src="js/slots.js?v=9"></script>
+<script src="js/races.js?v=9"></script>
+<script src="js/duel.js?v=9"></script>
+<script src="js/main.js?v=9"></script>
 </body>
 </html>

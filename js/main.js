@@ -61,6 +61,10 @@ const App = {
     U.on(U.$('btn-bar'), 'click', () => Bar.open());
     U.on(U.$('btn-market'), 'click', () => Market.open());
     U.on(U.$('btn-phone'), 'click', () => Hub.phoneAction());
+    U.on(U.$('btn-duel'), 'click', () => Duel.tryEnter());
+    U.on(U.$('duel-abandon'), 'click', () => Duel.abandon());
+    U.on(U.$('btn-e-back'), 'click', () => Hub.enter());
+    U.on(U.$('btn-e-new'), 'click', () => { UI.show('select'); });
     U.$$('.mkt-tab').forEach((t) => U.on(t, 'click', () => Market.setTab(t.dataset.tab)));
 
     // salir de mesas
@@ -175,6 +179,67 @@ const App = {
     UI.show('victory');
   },
 
+  /* ---------- LOS CUATRO FINALES DE LA PARTIDA PRIVADA ---------- */
+  duelEnding(s) {
+    Sound.crisis(false);
+    document.body.classList.remove('crisis');
+    const wrap = U.$('ending-wrap');
+    wrap.className = 'e-wrap deco-frame e-' + s.kind;
+    const E = {
+      socio: {
+        kicker: 'EL FINAL DE LA NOCHE',
+        title: 'EL SOCIO',
+        flavor: 'Repliegas el paño por última vez. Moretti estudia tus manos — las cartas, no las fichas — y suelta una risa ronca.<br>«Ganaste limpio. Y eso, en mi negocio, es más raro que la honestidad.»<br>Empuja hacia ti el montón duplicado y, con él, una llave de latón: <b>el Gold Crown ahora tiene un socio que conoce los dos lados del paño.</b> La deuda queda saldada… y bien invertida.'
+      },
+      estafa: {
+        kicker: 'EL FINAL DE LA NOCHE',
+        title: 'LA GRAN ESTAFA',
+        flavor: 'Ganas. Nadie puede probar cómo, pero todos lo saben — tú más que nadie.<br>Moretti firma el pago sin dejarte mirarle los ojos. «Vete. Rápido.»<br>Esa noche sales rico por la puerta de servicio. Un coche arranca a dos farolas de ti y no deja de seguirte hasta el amanecer. <b>Ganar fue fácil. Dejar de jugar, eso es lo difícil.</b>'
+      },
+      leccion: {
+        kicker: 'LA SALA DEL FONDO',
+        title: 'LA LECCIÓN',
+        flavor: s.abandoned
+          ? 'Te levantas a mitad de partida. Moretti no dice nada: junta las fichas con la palma abierta, casi con delicadeza.<br>«La silla se enfría, canario. Cuando puedas pagarla otra vez, <b>la sala sigue aquí. Yo respeto al que vuelve.</b>»'
+          : 'Moretti junta las fichas con la palma abierta, casi con delicadeza.<br>«Quinientas mil. Caro, ¿verdad? No: barato. La lección del siglo.»<br>Te devuelve la ficha negra — gastada de tanto bolsillo —. «Guárdala. Cuando puedas pagar la silla, <b>la sala sigue aquí. Yo respeto al que vuelve.</b>»'
+      },
+      rey: {
+        kicker: 'EXPEDIENTE CERRADO',
+        title: 'EL REY DE NADA',
+        flavor: 'La última carta cae y el paño se queda con todo: lo de la mesa y lo del bolsillo.<br>Silencio. Moretti apaga el cigarro, se levanta y pone frente a ti un vaso servido de la botella buena.<br>«Casi nadie llega tan lejos, canario.» —golpea tu hombro, una sola vez—. «Bebe. La casa invita. <b>Solo esta vez.</b>»'
+      }
+    }[s.kind];
+    let flavor = E.flavor;
+    // detalle de la Moneda del Mendigo: Moretti la reconoce en los finales de victoria
+    if ((s.kind === 'socio' || s.kind === 'estafa') && s.mendigo) {
+      flavor += '<br><br>Al pagar, Moretti nota la moneda agujereada que llevas al cuello y sonríe por primera vez: «El mendigo del puente sigue vivo, ¿eh? Quédate esa moneda, canario. <b>Es la única suerte de esta casa que no se puede comprar.</b>»';
+    }
+    if (s.kind === 'estafa' && s.cheated) {
+      flavor += '<br><br><span class="e-note">Moretti no olvidó tus trucos. Los sombreros que te siguen tampoco.</span>';
+    }
+    U.$('e-kicker').textContent = E.kicker;
+    U.$('e-title').textContent = E.title;
+    U.$('e-flavor').innerHTML = flavor;
+    U.$('e-stats').innerHTML =
+      '<li><span>Ficha final</span><b class="pos">' + U.fmt(s.chips) + '</b></li>' +
+      (s.kind === 'socio' || s.kind === 'estafa' ? '<li><span>La casa igualó tu paño</span><b>+' + U.fmt(s.pot || 0) + '</b></li>' : '') +
+      '<li><span>Pico de riqueza</span><b>' + U.fmt(s.peak) + '</b></li>' +
+      '<li><span>Manos jugadas</span><b>' + s.hands + '</b></li>' +
+      '<li><span>Carreras ganadas</span><b>' + s.hrWins + '</b></li>' +
+      '<li><span>Mejor racha</span><b>×' + s.bestStreak + '</b></li>' +
+      '<li><span>Trucos usados</span><b>' + s.tricksUsed + '</b></li>' +
+      '<li><span>Visitas a la sala trasera</span><b>' + s.backrooms + '</b></li>' +
+      (s.kind === 'leccion' || s.kind === 'rey' ? '<li><span>Deuda pendiente</span><b class="neg">' + U.fmt(s.debt) + '</b></li>' : '');
+    U.$('btn-e-back').hidden = s.kind !== 'leccion';
+    U.$('btn-e-new').hidden = s.kind === 'leccion';
+    U.$('btn-e-menu').hidden = s.kind === 'leccion';
+    UI.show('ending');
+    if (s.kind === 'socio') { FX.goldRain(3200); Sound.sfx.jackpot(); setTimeout(() => FX.goldRain(2400), 1400); }
+    else if (s.kind === 'estafa') { FX.flash('rgba(128,0,32,.4)', 1100); Sound.sfx.sting(); }
+    else if (s.kind === 'rey') { FX.flash('rgba(0,0,0,.75)', 1300); Sound.sfx.door(); FX.shake(); }
+    else { Sound.sfx.door(); }
+  },
+
   /* ---------- ayuda ---------- */
   renderHelp() {
     U.$('help-body').innerHTML =
@@ -191,7 +256,11 @@ const App = {
       '<p>Ciertas combinaciones activan <b>Sinergias VIP</b> (ej.: Old Fashioned + Reloj de Oro = <span class="gold">Hora Dorada</span>).</p></section>' +
       '<section class="help-sec"><h3>LA RACHA CALIENTE</h3>' +
       '<p>Cada victoria consecutiva suma <b>+5% de pago</b> en todos los juegos, hasta <b>+50%</b>. Perder una ronda la enfría.</p>' +
-      '<p>La victoria que enciende la racha no cobra el bono: cobra la siguiente. Consérvala.</p></section>' +
+      '<p>La victoria que enciende la racha no cobra el bono: cobra la siguiente. Consérvala… pero cuidado: <b>desde la cuarta victoria seguida la casa empieza a contar</b> (+2 de sospecha por victoria, +3 desde la novena), aunque el bono ya esté al máximo.</p></section>' +
+      '<section class="help-sec"><h3>LA PARTIDA PRIVADA</h3>' +
+      '<p>En el modo Historia, al cruzar <span class="gold">1.75M</span>, don Salvatore Moretti te entrega la <b>Ficha Negra</b>: la entrada a la sala del fondo.</p>' +
+      '<p>Duelo de Blackjack <b>a 3 victorias</b> con entrada de <b>500,000</b>. La apuesta del orgullo escala (10% → 15% → 20% → 25% del paño) y la <b>quinta mano se apuesta TODO</b>: paño y bolsillo. El <b>As de Moretti</b>: una vez por partida, el don cambia su carta oculta a la vista de todos.</p>' +
+      '<p>Ganar limpio te hace <b>EL SOCIO</b>; ganar con trucos o con la sospecha disparada, <b>LA GRAN ESTAFA</b>. Perder es <b>LA LECCIÓN</b> — puedes volver a pagar la entrada —. Arruinarte en el todo o nada es <b>EL REY DE NADA</b>.</p></section>' +
       '<section class="help-sec"><h3>ESA NOCHE EN EL CASINO</h3>' +
       '<p>Al volver al piso, la noche puede sorprenderte: borrachos con sistemas infalibles, mesas calientes, redadas, prestamistas y cantantes que dedican canciones.</p>' +
       '<p>En el modo Historia, la familia Moretti te irá poniendo ojo al cruzar cada umbral de riqueza.</p></section>' +

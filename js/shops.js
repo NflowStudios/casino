@@ -147,6 +147,8 @@ const Backroom = {
     UI.show('backroom');
     const r = State.run;
     r._pbSaid = 0;
+    r.stats.backrooms = (r.stats.backrooms || 0) + 1;
+    State.saveRun();
     UI.updatePitBoss();
     const choices = U.$('br-choices');
     choices.innerHTML = '';

@@ -120,7 +120,7 @@ const DATA = {
     reloj: { hint: 'Activa una Sinergia VIP', cond: (m) => m.synergies >= 1 },
     favor: { hint: 'Supera la prueba de suerte de la Habitación Trasera', cond: (m) => m.luckWins >= 1 },
     doping: { hint: 'Gana 10,000 o más en una sola carrera del Hipódromo', cond: (m) => m.bestHRWin >= 10000 },
-    consejo: { hint: 'Gana 3 carreras en una sola partida', cond: (m) => m.hrBestRun >= 3 }
+    consejo: { hint: 'Gana 3 carreras de Hipódromo (no hace falta que sean seguidas)', cond: (m) => (m.hrWins || 0) >= 3 }
   },
 
   /* ================= SINERGIAS VIP ================= */
@@ -150,9 +150,55 @@ const DATA = {
       text: 'Esta vez el teléfono lo coge el gerente con guantes blancos. La línea cruje como madera vieja.<br><br>«Medio millón.» —un silencio largo—. «Dijeron que eras un don nadie con suerte. La suerte se acaba. La palabra… la palabra es otra cosa. Sigue. Estamos mirando.»' },
     { at: 1000000, icon: 'favor', title: 'LOS OJOS DE LA FAMILIA',
       text: 'Ya nadie finge no verte. Los crupieres te saludan con la cabeza; los matones, con la mirada. En la barra dejan tu whisky favorito sin que lo pidas.<br><br>Un millón. En la Habitación Trasera, alguien marca tu fotografía con una esquina doblada: <b>«activo. rentable. vigilar.»</b>' },
-    { at: 1750000, icon: 'lacre', title: 'LA ÚLTIMA CENA',
-      text: 'Te esperan junto a la puerta: dos sombras con sombrero y un sobre de lacre borgoña sin abrir.<br><br>«Estás a un paso, canario.» —el sobre desaparece bajo el gabán—. «Cuando tengas el resto, no llames. <b>Vendremos nosotros.</b>»' }
+    { at: 1750000, icon: 'chipnegra', title: 'LA FICHA NEGRA',
+      text: 'No hay sombras esperándote esta vez. Es el propio don Salvatore Moretti quien cruza el salón, se sienta a tu mesa y deja sobre el paño una <b>ficha negra grabada en oro</b>.<br><br>«Casi dos millones. Ya no eres un canario: eres un problema con traje bueno.» —la gira entre los dedos—. «Sala del fondo. Medianoche. <b>Quinientas mil de entrada</b>, a tres victorias, y la casa iguala lo que dejes sobre el paño. Sin límite significa sin límite, amigo mío. <b>Ni de apuesta, ni de piedad.</b>»<br><br>La ficha pesa más de lo que debería.',
+      btn: 'GUARDAR LA FICHA' }
   ],
+
+  /* ================= LA PARTIDA PRIVADA (duelo final, modo historia) =================
+     Se desbloquea con la Ficha Negra (cruzar 1.75M). Blackjack a 3 victorias contra
+     don Salvatore Moretti en persona. La apuesta del orgullo escala por mano y la
+     quinta se juega a TODO o NADA (paño + bolsillo). */
+  DUEL: {
+    BUYIN: 500000,
+    WINS: 3,
+    STAKES: [0.10, 0.15, 0.20, 0.25],   // manos 1-4: % del paño · mano 5+: TODO (paño + bolsillo)
+    AS_SWAP_RANGE: [12, 16],             // Moretti cambia su carta oculta si está atascado en 12-16
+    lines: {
+      start: [
+        '«Siéntate. El whisky ya está pagado… por mí. No te acostumbres.»',
+        '«Tres victorias. Sin límite significa sin límite: ni de apuesta, ni de piedad.»'
+      ],
+      pWin: [
+        '«Bien jugado, canario. Disfrútalo: dura poco.»',
+        '«El paño te favorece esta noche. Curioso.»',
+        '«Ahí está el jugador del que me hablaron. Justo a tiempo para perderlo todo.»'
+      ],
+      mWin: [
+        '«La casa también sabe jugar. La diferencia es que ella no suda.»',
+        '«¿Era todo? Tengo mesa para rato.»',
+        '«Más despacio, canario. El orgullo apuesta por los dos.»'
+      ],
+      push: [
+        '«Empate. La noche todavía no decide de qué lado está.»',
+        '«Nadie gana, nadie llora. Sigamos.»'
+      ],
+      pTwo: [
+        '«Dos.» —Moretti no parpadea—. «La próxima mano la jugaremos los dos con mucho cuidado.»'
+      ],
+      mTwo: [
+        '«Una mano más y aprendes la lección del siglo, canario.»'
+      ],
+      allIn: [
+        '«Lo de la mesa y lo del bolsillo. TODO. ¿O el canario ya no cree en su suerte?»',
+        '«Ponlo todo. Así sabremos, tú y yo, de qué estás hecho de verdad.»'
+      ],
+      asSwap: [
+        '«Esta carta está gastada. El mazo me debe una.» —Moretti la cambia sin esconderse.',
+        '«Perdona la licencia: en mi casa, el anfitrión cambia una carta. Solo una.»'
+      ]
+    }
+  },
 
   /* ================= EVENTOS NOCTURNOS (al volver al hub) ================= */
   EVENTS: [

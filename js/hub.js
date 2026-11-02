@@ -2,6 +2,8 @@
 'use strict';
 const Hub = {
   enter() {
+    // un duelo a medias siempre manda: el don espera en la sala del fondo
+    if (Duel.active()) { Duel.resume(); return; }
     UI.show('hub');
     this.applyTier();
     this.refreshServices();
@@ -31,6 +33,15 @@ const Hub = {
     note.textContent = r.mode === 'story'
       ? (ready ? '¡SALDAR DEUDA!' : 'Faltan ' + U.fmtC(r.debt - r.chips))
       : 'Sin deudas';
+    // la ficha negra abre la sala del fondo (solo modo historia, tras cruzar 1.75M)
+    const duelBtn = U.$('btn-duel');
+    if (duelBtn) {
+      const invited = Duel.available();
+      duelBtn.hidden = !invited;
+      duelBtn.classList.toggle('duel-ready', invited && r.chips >= DATA.DUEL.BUYIN);
+      const ds = U.$('duel-note');
+      if (ds) ds.textContent = invited ? (r.chips >= DATA.DUEL.BUYIN ? '¡Te espera!' : 'Faltan ' + U.fmtC(DATA.DUEL.BUYIN - r.chips)) : 'Partida Privada';
+    }
   },
   async phoneAction() {
     const r = State.run;

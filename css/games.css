@@ -220,3 +220,50 @@
   .hr-lane-tag{width:66px}
   .hr-lane-tag span{font-size:.46rem}
 }
+
+/* ================= LA SALA DEL FONDO (PARTIDA PRIVADA) ================= */
+.duel-felt{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:var(--sp-2);background:radial-gradient(ellipse at 50% 34%,#3d0f1c 0%,#1f0710 55%,#12040a 100%);border:3px solid #6d5a2a;border-radius:min(150px,22vw) min(150px,22vw) 24px 24px;box-shadow:inset 0 0 110px rgba(0,0,0,.72),inset 0 0 0 6px rgba(0,0,0,.28),var(--sh);padding:clamp(2.8rem,6vh,3.2rem) clamp(1rem,4vw,2rem) var(--sp-3);position:relative;min-height:320px;overflow:hidden}
+.duel-felt::before{content:"BLACKJACK PAGA 3 A 2 · LA CASA IGUALA EL PAÑO";position:absolute;top:1.2rem;left:50%;transform:translateX(-50%);font-family:var(--fd);color:rgba(244,208,111,.5);letter-spacing:.34em;font-size:clamp(.58rem,1.3vw,.8rem);text-shadow:0 1px 0 rgba(0,0,0,.5);white-space:nowrap}
+.duel-scorebar{display:flex;flex-direction:column;align-items:center;gap:.3rem;margin-top:.6rem}
+.duel-score{display:flex;align-items:center;gap:var(--sp-3);font-family:var(--ft);letter-spacing:.24em;font-size:var(--fs-4);color:var(--cream)}
+.duel-score .duel-side.you{color:var(--gold-bright)}
+.duel-score .duel-side.him{color:#e8a0ad}
+.duel-score .duel-sep{color:rgba(242,232,213,.3)}
+.pips{display:inline-flex;gap:.4em}
+.pips i{width:.72em;height:.72em;transform:rotate(45deg);border:1.5px solid rgba(244,208,111,.5);background:transparent;transition:all .35s}
+.pips i.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(212,175,55,.7)}
+.duel-stakes{display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap;justify-content:center;font-family:var(--ft);font-size:var(--fs-2);letter-spacing:.14em;color:var(--cream-dim)}
+.duel-stakes .ds-hand{color:var(--gold-bright);border:1px solid var(--gold-soft);padding:.1em .6em;background:rgba(212,175,55,.1)}
+.duel-stakes .ds-bet{color:var(--cream)}
+.duel-stakes .ds-bet.allin{color:#ff8f88;animation:allInPulse 1.2s ease-in-out infinite;font-weight:700}
+.duel-stakes .ds-stack b{color:var(--gold-bright)}
+@keyframes allInPulse{50%{opacity:.6;text-shadow:0 0 14px rgba(255,80,70,.8)}}
+.duel-row{display:flex;align-items:center;justify-content:center;gap:var(--sp-4)}
+.duel-portrait{flex:0 0 auto;width:clamp(72px,10vw,104px);filter:drop-shadow(0 10px 22px rgba(0,0,0,.6))}
+.duel-portrait svg{width:100%;height:auto;display:block}
+.duel-handbox{display:flex;flex-direction:column;align-items:center;gap:.5rem;min-width:0}
+.duel-asbadge{font-family:var(--ft);font-size:var(--fs-1);letter-spacing:.18em;color:var(--gold-bright);border:1px solid rgba(212,175,55,.45);background:rgba(212,175,55,.1);padding:.18em .55em;cursor:help;transition:all .3s}
+.duel-asbadge.used{color:rgba(242,232,213,.28);border-color:rgba(242,232,213,.15);background:transparent;text-decoration:line-through}
+.duel-say{align-self:center;max-width:min(520px,86%);text-align:center;font-family:'Special Elite',var(--ft);font-style:italic;color:#e8cfa0;background:rgba(0,0,0,.34);border-left:2px solid rgba(212,175,55,.55);border-right:2px solid rgba(212,175,55,.55);padding:.45em 1em;font-size:var(--fs-3);line-height:1.55;min-height:2.2em}
+.duel-say .say-who{font-family:var(--ft);font-style:normal;font-size:var(--fs-1);letter-spacing:.3em;color:var(--burgundy-bright,#e0708a);display:block;margin-bottom:.15em}
+.duel-say.pop{animation:sayPop .45s cubic-bezier(.2,.85,.3,1)}
+@keyframes sayPop{from{opacity:0;transform:translateY(8px)}}
+.duel-msg{align-self:center;text-align:center;font-family:var(--ft);font-size:var(--fs-5);color:var(--cream);letter-spacing:.08em;min-height:1.6em;text-shadow:0 2px 4px rgba(0,0,0,.8);z-index:2;padding:0 1rem}
+.duel-msg.big{color:var(--gold-bright);font-size:var(--fs-6);text-shadow:0 0 18px rgba(212,175,55,.6)}
+.duel-msg.bad{color:#ffb3ad}
+.duel-countbox{color:#8ff5ae;border-color:#43b95c;cursor:help}
+.card.swapped{animation:asSwap 1s cubic-bezier(.2,.85,.3,1)}
+@keyframes asSwap{0%{transform:translateY(0) rotate(0)}30%{transform:translateY(-26px) rotate(-9deg);box-shadow:0 0 24px rgba(212,175,55,.8)}100%{transform:translateY(0) rotate(0)}}
+.duel-ember{fill:#ff6a2a;animation:ember 2.2s ease-in-out infinite}
+.duel-smoke .dks{fill:rgba(210,214,224,.16);animation:puff 4.2s ease-in-out infinite}
+.duel-smoke .p2{animation-delay:1.1s}
+.duel-smoke .p3{animation-delay:2.3s}
+.duel-eyes{animation:duelGlint 5.5s ease-in-out infinite}
+@keyframes duelGlint{0%,88%,100%{opacity:.85}92%{opacity:.2;stroke:#fff3d6}}
+
+@media (max-width:900px){
+  .duel-stage{flex-direction:column;overflow:auto;justify-content:flex-start}
+  .duel-portrait{width:60px}
+  .duel-say{font-size:var(--fs-2)}
+  .duel-felt{min-height:420px}
+}

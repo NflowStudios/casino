@@ -217,6 +217,19 @@ const Icon = {
       <path d="M12 3.2C13.2 6 10.4 7.5 9.3 9.4c-.9 1.6-1.4 2.8-1.4 4.3a4.1 4.1 0 0 0 4.1 4.1 4.1 4.1 0 0 0 4.1-4.1c0-1.9-.9-3.4-1.8-4.8"/>
       <path d="M12 17.8c-1.5-.6-2.3-1.8-2.1-3.4 1.4.4 2.3-.5 2.1-2.3 1.6 1.2 2.4 2.5 2.4 4" stroke-width="1.1"/>`,
 
+    eye: /* ojo déco: la casa te observa */ `
+      <path d="M2.8 12C5 7.9 8.4 5.8 12 5.8S19 7.9 21.2 12C19 16.1 15.6 18.2 12 18.2S5 16.1 2.8 12Z"/>
+      <circle cx="12" cy="12" r="3.1"/>
+      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>
+      <path d="M12 5.8V3.4M12 18.2V20.6" stroke-width="1.1"/>
+      <path d="M5.9 7.4L4.4 5.9M18.1 7.4L19.6 5.9" stroke-width="1"/>`,
+
+    chipnegra: /* ficha negra grabada en oro — la entrada de la sala del fondo */ `
+      <circle cx="12" cy="12" r="7.4"/>
+      <circle cx="12" cy="12" r="6.2" stroke-dasharray="2.4 2.46" stroke-width="1.2"/>
+      <circle cx="12" cy="12" r="3.4"/>
+      <path d="M12 8.6l1.1 1.9h2l-1 1.7 1 1.7h-2L12 15.8 10.9 13.9h-2l1-1.7-1-1.7h2Z" fill="currentColor" stroke="none"/>`,
+
     /* ---------- SERVICIOS / UI ---------- */
     martini: /* botella y copa — LA BARRA */ `
       <path d="M7.5 4H9.5V8.8C9.5 9.8 8.7 10.2 8.7 11.2V18.4A1.6 1.6 0 0 0 10.3 20H7.1A1.6 1.6 0 0 0 8.7 18.4V11.2C8.7 10.2 7.5 9.8 7.5 8.8Z"/>

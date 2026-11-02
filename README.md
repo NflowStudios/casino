@@ -19,9 +19,10 @@
 | **Permadeath** | Caer a 0 fichas = bancarrota: pierdes tragos, trucos y amuletos de la partida. |
 | **Progresión roguelite** | Los objetos desbloqueados permanecen en el catálogo de la Barra y el Mercado Negro para partidas futuras. |
 | **Sospecha** | 0–100%. Sube con cada truco; baja con rondas limpias y tragos. Al 100%: **Habitación Trasera** (soborno, entregar trucos o prueba de suerte). |
-| **Racha Caliente** | Cada victoria consecutiva suma **+5% de pago** (hasta +50%). Perder una ronda la enfría. |
+| **Racha Caliente** | Cada victoria consecutiva suma **+5% de pago** (hasta +50%). Perder una ronda la enfría. **Ojo:** desde la 4ª victoria seguida la casa empieza a contar (+2 de sospecha por victoria, +3 desde la 9ª), aunque el bono ya esté al máximo. |
 | **Escenarios** | Sótano (< 50k) → Club Privado (≥ 50k) → Gran Salón VIP (≥ 500k). La interfaz, el letrero y los límites de apuesta evolucionan. |
-| **Escenas Moretti** | En el modo Historia, cruzar 100k / 250k / 500k / 1M / 1.75M dispara una escena de la familia: de la burla al respeto. |
+| **Escenas Moretti** | En el modo Historia, cruzar 100k / 250k / 500k / 1M / 1.75M dispara una escena de la familia: de la burla al respeto… y a la **Ficha Negra**. |
+| **La Partida Privada** | El duelo final: al cruzar **1.75M**, don Salvatore Moretti te entrega la Ficha Negra. Blackjack **a 3 victorias** con entrada de 500k, apuesta del orgullo (10→15→20→25% del paño y **todo o nada** en la quinta mano) y el **As de Moretti**. Cuatro finales: **EL SOCIO**, **LA GRAN ESTAFA**, **LA LECCIÓN** y **EL REY DE NADA**. |
 | **Eventos nocturnos** | Al volver al piso, la noche puede sorprenderte: el borracho con un sistema, la mesa caliente, la redada, el prestamista, la cantante. |
 
 ### Las mesas
@@ -51,10 +52,10 @@ python3 -m http.server 8080
 
 ```
 casino/
-├─ index.html              SPA de pantallas: menú, selección, hub, 4 mesas, backroom, finales
+├─ index.html              SPA de pantallas: menú, selección, hub, 4 mesas, sala del fondo, backroom, finales
 ├─ css/
-│  ├─ style.css            Paleta noir, HUD, Pit Boss, tiers de escenario, modales, crisis
-│  └─ games.css            Felt de Blackjack, rueda y tapete de Ruleta, gabinete de Slots, hipódromo
+│  ├─ style.css            Paleta noir, HUD, Pit Boss, tiers de escenario, modales, crisis, finales del duelo
+│  └─ games.css            Felt de Blackjack, rueda y tapete de Ruleta, gabinete de Slots, hipódromo, sala del fondo
 ├─ js/
 │  ├─ utils.js             Helpers, RNG, tooltip, toasts (DOM puro)
 │  ├─ icons.js             Iconografía Art Déco unificada (SVG 24×24 + escenas de puerta 120×150)
@@ -70,6 +71,7 @@ casino/
 │  ├─ roulette.js          Rueda SVG generada, tapete simple (plenos + color/paridad), animación con slow-zoom
 │  ├─ slots.js             Tragamonedas clásico con palanca (giro directo, parejas pagan ×2)
 │  ├─ races.js             El Hipódromo Nocturno: 6 corredores, recta, narración, foto final
+│  ├─ duel.js              La Partida Privada: duelo final contra Moretti y los 4 finales
 │  └─ main.js              Bootstrap, menú, finales, ayuda
 └─ README.md
 ```
@@ -86,6 +88,12 @@ casino/
 El sitio se sirve desde la rama `main`, carpeta raíz (`/`). Cualquier `git push` actualiza el juego en segundos.
 
 ## Registro de cambios
+
+### v1.5.0 — La Sala del Fondo
+- **La Partida Privada (duelo final):** al cruzar **1.75M** en el modo Historia, Moretti entrega la **Ficha Negra** y abre *La Sala del Fondo*: Blackjack **a 3 victorias** contra el don en persona, con entrada de 500k y **apuesta del orgullo** (10% → 15% → 20% → 25% del paño; la quinta mano se juega **a TODO O NADA**, paño y bolsillo). **El As de Moretti:** una vez por partida cambia su carta oculta a la vista de todos. Tus trucos funcionan en la sala… y deciden tu final.
+- **Cuatro finales:** **EL SOCIO** (ganar limpio y con la sospecha baja), **LA GRAN ESTAFA** (ganar con trucos o quemado — con sombras en el epílogo), **LA LECCIÓN** (perder; puedes volver a pagar la entrada) y **EL REY DE NADA** (arruinarte en el todo o nada). Epílogos con estadísticas de la partida y un guiño si conservas la *Moneda del Mendigo*. Ganar cierra el modo Historia.
+- **La racha quema:** desde la **4ª victoria consecutiva** el contador de racha se vuelve rojo con ojos — la casa cuenta tus victorias: **+2 de sospecha por victoria** (+3 desde la 9ª), aunque el bono ya esté congelado en +50%. Al romper una racha larga, el crupier anota algo en una libreta pequeña.
+- **Arreglo — Consejo del Jockey:** el desbloqueo (“gana 3 carreras”) nunca se activaba para partidas guardadas por versiones anteriores: la fusión de estadísticas dejaba `hrBestRun` en `undefined` y la comparación siempre fallaba. Ahora las victorias se cuentan **en total histórico** (no hace falta que sean seguidas ni en la misma partida) y la fusión de `localStorage` rellena los defaults correctamente (también repara `doping` y el récord de pico).
 
 ### v1.4.0 — La Noche se Mueve
 - **El Hipódromo Nocturno (nueva mesa):** seis corredores con seda propia, apuesta a ganador según pizarra variable, carreras de ~10 s con narración en vivo, adelantos, remontadas y **foto final**. Trucos propios: *Doping del Establo* y *Consejo del Jockey*; el bookie vigila tus rachas.
@@ -113,6 +121,9 @@ El sitio se sirve desde la rama `main`, carpeta raíz (`/`). Cualquier `git push
 ## Hoja de ruta
 
 - [ ] Split en Blackjack
+- [ ] El bar de Manny: radio de época con boletines que anticipan la noche
+- [ ] Sistema de calor unificado (sospecha con escalera de consecuencias y sobornos)
+- [ ] Póker de trastienda contra NPCs con tells
 - [ ] Dados de calle (craps) como quinta mesa
 - [ ] Más amuletos y sinergias por nodo de progresión
 - [ ] Tabla de récords locales

@@ -70,6 +70,7 @@ const Moretti = {
     ov.classList.add('on');
     Sound.sfx.sting();
     FX.flash('rgba(128,0,32,.28)', 900);
+    U.$('mo-btn').textContent = sc.btn || 'SEGUIR JUGANDO';
     U.$('mo-btn').onclick = () => {
       ov.classList.remove('on');
       Sound.sfx.flash();

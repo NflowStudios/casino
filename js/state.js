@@ -16,7 +16,8 @@ const State = {
       stats: {
         runs: 0, deaths: 0, bjHands: 0, slotSpins: 0, rlSpins: 0, wins: 0,
         biggestWin: 0, bestRLWin: 0, bestHRWin: 0, backrooms: 0, luckWins: 0, crisisCount: 0,
-        synergies: 0, jackpots: 0, tierEver: 0, tricksBestRun: 0, peakEver: 0, hrBestRun: 0
+        synergies: 0, jackpots: 0, tierEver: 0, tricksBestRun: 0, peakEver: 0, hrBestRun: 0,
+        hrWins: 0
       }
     };
   },
@@ -27,7 +28,10 @@ const State = {
         const m = JSON.parse(raw);
         const def = this.defaultMeta();
         this.meta = Object.assign(def, m);
-        this.meta.stats = Object.assign(def.stats, m.stats || {});
+        // fusión de stats con defaults FRESCOS: las claves nuevas de versiones
+        // posteriores jamás deben quedar undefined (bug v1.4: hrBestRun undefined
+        // bloqueaba los desbloqueos del hipódromo para jugadores veteranos)
+        this.meta.stats = Object.assign(this.defaultMeta().stats, m.stats || {});
         this.meta.unlocked = (m.unlocked || []).filter((id) => DATA.UNLOCKS[id] || DATA.DRINKS.some((d) => d.id === id) || DATA.TRICKS.some((t) => t.id === id) || DATA.AMULETS.some((a) => a.id === id));
         return;
       }
@@ -75,7 +79,8 @@ const State = {
       // v1.4: racha caliente, suerte temporal, eventos nocturnos y escenas Moretti
       streak: 0, luckRounds: 0, luckPower: 0,
       roundsSinceEvent: 0, morettiQueue: [], morettiSeen: [], hrStreak: 0,
-      stats: { hands: 0, tricksUsed: 0, biggestWin: 0, peak: DATA.START_CHIPS, hrWins: 0, bestStreak: 0 },
+      duel: null,
+      stats: { hands: 0, tricksUsed: 0, biggestWin: 0, peak: DATA.START_CHIPS, hrWins: 0, bestStreak: 0, backrooms: 0 },
       unlocksThisRun: []
     };
     this.meta.stats.runs++;
@@ -102,9 +107,11 @@ const State = {
       if (!Array.isArray(r.morettiQueue)) r.morettiQueue = [];
       if (!Array.isArray(r.morettiSeen)) r.morettiSeen = [];
       if (r.hrStreak === undefined) r.hrStreak = 0;
+      if (r.duel === undefined) r.duel = null;
       if (r.stats) {
         if (r.stats.hrWins === undefined) r.stats.hrWins = 0;
         if (r.stats.bestStreak === undefined) r.stats.bestStreak = 0;
+        if (r.stats.backrooms === undefined) r.stats.backrooms = 0;
       }
       return r;
     } catch (e) { return null; }
@@ -122,7 +129,7 @@ const State = {
     if (r.chips > r.peak) {
       r.peak = r.chips;
       if (r.peak > r.stats.peak) r.stats.peak = r.peak;
-      if (r.peak > this.meta.stats.peakEver) this.meta.stats.peakEver = r.peak;
+      if (r.peak > (this.meta.stats.peakEver || 0)) this.meta.stats.peakEver = r.peak;
     }
     if (n > 0 && n > r.stats.biggestWin) r.stats.biggestWin = n;
     UI.renderHUD(n);
@@ -316,6 +323,15 @@ const State = {
     if (r.streak > (r.stats.bestStreak || 0)) r.stats.bestStreak = r.streak;
     if (r.streak === 2) U.toast(Icon.svg('streak', 'toast-ico') + '¡Racha caliente! Cada victoria seguida suma +5% de pago (máx. +50%).', 'gold', 4200);
     else if (r.streak >= 3 && r.streak % 5 === 0) U.toast(Icon.svg('streak', 'toast-ico') + 'La mesa arde: racha ×' + r.streak + ' — +' + Math.min(r.streak, 10) * 5 + '% de pago.', 'gold', 4000);
+    // la casa cuenta tus victorias: racha larga = patrón, y los casinos odian los patrones
+    // (sigue sumando aunque el multiplicador ya esté congelado en +50%)
+    if (r.streak >= 9) {
+      this.addSuspicion(3);
+      if (r.streak === 9) U.toast(Icon.svg('eye', 'toast-ico') + 'Nadie gana así por casualidad. El casino entero lo sabe.', 'sus', 4200);
+    } else if (r.streak >= 4) {
+      this.addSuspicion(2);
+      if (r.streak === 4) U.toast(Icon.svg('eye', 'toast-ico') + 'El crupier deja de sonreír: la casa empieza a contar tus victorias.', 'sus', 4200);
+    }
     UI.renderHUD();
   },
   breakStreak() {
@@ -323,7 +339,8 @@ const State = {
     if (!r) return;
     const had = r.streak || 0;
     r.streak = 0;
-    if (had >= 4) U.toast('Tu racha de ' + had + ' victorias se enfría.', 'danger', 3200);
+    if (had >= 8) U.toast('Tu racha de ' + had + ' victorias se enfría. El crupier anota algo en una libreta pequeña.', 'danger', 3600);
+    else if (had >= 4) U.toast('Tu racha de ' + had + ' victorias se enfría.', 'danger', 3200);
     UI.renderHUD();
   },
 
@@ -400,11 +417,13 @@ const State = {
     if (amount > this.meta.stats.biggestWin) this.meta.stats.biggestWin = amount;
     if (game === 'roulette' && amount > this.meta.stats.bestRLWin) this.meta.stats.bestRLWin = amount;
     if (game === 'races') {
-      if (amount > this.meta.stats.bestHRWin) this.meta.stats.bestHRWin = amount;
+      if (amount > (this.meta.stats.bestHRWin || 0)) this.meta.stats.bestHRWin = amount;
       r.stats.hrWins = (r.stats.hrWins || 0) + 1;
-      if (r.stats.hrWins > this.meta.stats.hrBestRun) this.meta.stats.hrBestRun = r.stats.hrWins;
+      this.meta.stats.hrWins = (this.meta.stats.hrWins || 0) + 1; // total histórico
+      if (r.stats.hrWins > (this.meta.stats.hrBestRun || 0)) this.meta.stats.hrBestRun = r.stats.hrWins;
     }
     this.saveMeta();
+    this.checkUnlocks();
   },
   recordSpin(game) {
     const s = this.meta.stats;

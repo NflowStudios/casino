@@ -55,8 +55,13 @@ const UI = {
         stEl.hidden = false;
         U.$('hud-streak-n').textContent = 'RACHA ×' + n;
         U.$('hud-streak-pct').textContent = '+' + Math.min(n, 10) * 5 + '%';
-        stEl.classList.toggle('hot', n >= 5);
-      } else stEl.hidden = true;
+        stEl.classList.toggle('hot', n >= 5 && n < 9);
+        // racha larga: la casa ya cuenta tus victorias — llamas rojas y ojos encima
+        stEl.classList.toggle('burn', n >= 4);
+        stEl.dataset.tip = n >= 4
+          ? 'La casa empieza a contar tus victorias: +2 de sospecha por cada victoria seguida (+3 desde la novena), aunque el bono ya esté al máximo.'
+          : 'Racha caliente: cada victoria consecutiva suma +5% de pago (máx. +50%). Se rompe al perder.';
+      } else { stEl.hidden = true; stEl.classList.remove('burn'); }
     }
     this.updatePitBoss();
     this.renderInventory();
